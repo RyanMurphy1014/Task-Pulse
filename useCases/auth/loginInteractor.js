@@ -1,7 +1,12 @@
 const dbInteractor = require("../../interactors/dbInteractor");
 
 function login(username, password) {
-  dbInteractor.login(username, password);
+ let attemptedLogin =dbInteractor.login(username, password);
+ if(attemptedLogin != null){
+    return attemptedLogin; 
+ }else{
+  return null;
+ } 
 }
 
 function createUserCredentials(username, password) {

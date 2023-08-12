@@ -51,15 +51,59 @@ function displayTitle(){
 
 displayTitle();
 
+let activeUser;
+
 const loginInteractor = require("../../useCases/auth/loginInteractor");
 
-let options = ["Login", "Register"];
-let index = userInput.keyInSelect(options, "Select:");
-if (index === 0) {
-  loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
+let preLoginOptions = ["Login", "Register"];
+let postLoginOptions = ["Tasks", "Teams", "Projects", "Organizations"];
+
+//State Flags
+let isRunning = true;
+let isLoggedIn = false;
+
+while(isRunning){
+if(isLoggedIn === false){
+  let index = userInput.keyInSelect(preLoginOptions, "Select:");
+  
+  //Login
+  if (index === 0) {
+    doLogin();  
+  }
+
+  //Register
+  if (index === 1) {
+    doRegister();
+  }
+  //Leave
+  if(index === -1){
+    console.log("Goodbye!");
+  isRunning = false; 
+  }
 }
-if (index === 1) {
-  loginInteractor.createUserCredentials(userInput.question("Username: "), userInput.question("Password: "));
+if(isLoggedIn === true){
+  index = userInput.keyInSelect(postLoginOptions, "Select:");
+  //Add in logic here***
 }
 
+}
 process.exit();
+
+
+
+
+//
+function doLogin(){
+let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
+  if(attemptedLogin != null){
+    activeUser = attemptedLogin;
+    console.log("Successful Login");
+    isLoggedIn = true;
+  }else{
+    console.log("Bad login");
+  }
+}
+
+function doRegister(){
+  loginInteractor.createUserCredentials(userInput.question("Username: "), userInput.question("Password: "));
+}
