@@ -1,4 +1,4 @@
-const dbInteractor = require("../../interactors/dbInteractor");
+const dbInteractor = require("./dbInteractor");
 
 function login(username, password) {
  let attemptedLogin =dbInteractor.login(username, password);
