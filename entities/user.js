@@ -1,13 +1,15 @@
 class user {
   id;
   name;
-  teams;
   email;
+  role;
 
-  constructor(id, name, teams, email) {
-    this.id = id;
-    this.name = name;
-    this.teams = teams;
-    this.email = email;
-  }
+  organizations;
+  projects;
+  teams;
+  comments;
+
+  
 }
+
+module.exports = {user};
