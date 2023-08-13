@@ -1,3 +1,9 @@
+const { user } = require("../../entities/user");
+
+let listOfUsers = [];
+listOfUsers.push(new user());
+
+
 
 function findUserById(id){
     
