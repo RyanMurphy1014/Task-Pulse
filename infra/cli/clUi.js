@@ -54,22 +54,76 @@ let activeUser;
 
 const loginInteractor = require("../../interactors/loginInteractor");
 
-let preLoginOptions = ["Login", "Register"];
-let postLoginOptions = ["Tasks", "Teams", "Projects", "Organizations", "Logout"];
+const preLoginOptions = ["Login", "Register"];
+const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations", "Logout"];
 
 //State Flags
 let isRunning = true;
-let isLoggedIn = false;
-let viewState = "Pre login";
-
+let viewState = "Pre Login";
 while(isRunning){
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  if(isLoggedIn === false){
-    let index = userInput.keyInSelect(preLoginOptions, "Select:");
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  switch(viewState){
+    //Select a view state to go to the correct submenu. Changes occur after while loop reiterates.
     
+    case "Pre Login":
+      preLogin();
+      
+      break;
+    case "Post Login":
+     postLogin(); 
+    break;
+    
+    case "Users":
+      usersView();
+    break;
+    
+    case "Tasks":
+      tasksView();
+    break;
+
+    case "Teams":
+        teamsView();
+    break;
+
+    case "Projects":
+        projectsView();
+    break;
+
+    case "Organizations":
+        organizationsView();
+    break;
+
+    default:
+      preLogin();
+    break;
+  }
+}
+
+
+
+process.exit();
+
+
+
+
+//
+function attemptLogin(){
+let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
+  if(attemptedLogin != null){
+    activeUser = attemptedLogin;
+    console.log("Successful Login");
+    viewState = "Post Login"
+  }else{
+    console.log("Bad login");
+  }
+}
+
+function preLogin(){
+ 
+  let index = userInput.keyInSelect(preLoginOptions, "Select:");
     //Login
     if (index === 0) {
-      login();  
+      attemptLogin();  
     }
 
     //Register
@@ -81,38 +135,6 @@ while(isRunning){
       console.log("Goodbye!");
     isRunning = false; 
     }
-  }
-  //Post Login
-  switch(viewState){
-    //Select a view state to go to the correct submenu. Changes occur after while loop reiterates.
-    case "Post Login":
-      index = userInput.keyInSelect(postLoginOptions, "Select:");
-      if(index === 4){
-        logout();
-      }
-    break;
-
-    }
-}
-
-
-
-process.exit();
-
-
-
-
-//
-function login(){
-let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
-  if(attemptedLogin != null){
-    activeUser = attemptedLogin;
-    console.log("Successful Login");
-    isLoggedIn = true;
-    viewState = "Post Login"
-  }else{
-    console.log("Bad login");
-  }
 }
 
 function register(){
@@ -120,6 +142,35 @@ function register(){
 }
 
 function logout(){
-  viewState = "Pre login";
-  isLoggedIn = false;
+  viewState = "Pre Login";
+  activeUser = null;
+}
+
+function postLogin(){
+index = userInput.keyInSelect(postLoginOptions, "Select:");
+
+
+      if(index === 0){
+
+      }
+      if(index === 1){
+
+      }
+      if(index === 2){
+
+      }
+      if(index === 3){
+
+      }
+      if(index === 4){
+
+      }
+      if(index === 5){
+        logout();
+      }
+}
+
+
+function usersView(){
+  const userViewOptions = [""]
 }
