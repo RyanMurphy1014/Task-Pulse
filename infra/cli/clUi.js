@@ -170,7 +170,9 @@ function usersView() {
   const dbInteractor = require("../../interactors/dbInteractor");
   let userToLookup = userInput.question("Enter name or ID of a User to lookup:");
   if (userToLookup.charAt(0) <= "9" && userToLookup.charAt(0) >= "0") {
-    console.log(JSON.stringify(dbInteractor.getUserData(userToLookup)));
+    console.log(dbInteractor.getUserData(userToLookup).toString());
+  } else {
+    console.log(JSON.stringify(dbInteractor.searchUsersByName(userToLookup)));
   }
   viewState = "Post Login";
 }

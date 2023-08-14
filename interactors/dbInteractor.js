@@ -32,4 +32,9 @@ function getUserData(id) {
   return databaseImplementation.findUserById(id);
 }
 
-module.exports = { login, createUserCredentials, getUserData };
+function searchUsersByName(name) {
+  databaseImplementation = require("../infra/db/mockUsers");
+  return databaseImplementation.searchUsersByName(name);
+}
+
+module.exports = { login, createUserCredentials, getUserData, searchUsersByName };
