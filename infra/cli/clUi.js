@@ -184,20 +184,16 @@ function usersView() {
   }
 
   function userLookup() {
-    let userToLookup = userInput.question("Enter name or ID of a User to lookup:");
+    let userIdToLookup = userInput.question("Enter name or ID of a User to lookup:");
 
-    if (dbInteractor.isValidId(userToLookup)) {
-      if (userToLookup.charAt(0) <= "9" && userToLookup.charAt(0) >= "0") {
-        if (dbInteractor.getUserData(userToLookup) != null) {
-          console.log(dbInteractor.getUserData(userToLookup).toString());
-        } else {
-          console.log(`No results for ID:${userToLookup}`);
-        }
+    if (userIdToLookup.charAt(0) <= "9" && userIdToLookup.charAt(0) >= "0") {
+      if (dbInteractor.getUserData(userIdToLookup) != null) {
+        console.log(dbInteractor.getUserData(userIdToLookup).toString());
       } else {
-        console.log(JSON.stringify(dbInteractor.searchUsersByName(userToLookup)));
+        console.log(`No results for ID:${userIdToLookup}`);
       }
     } else {
-      console.log("That is an invalid id number.");
+      console.log(dbInteractor.searchUsersByName(userIdToLookup).toString());
     }
   }
 
@@ -205,7 +201,7 @@ function usersView() {
     const enteredId = userInput.question("Enter ID of User you want to edit: ");
     if (dbInteractor.isValidId(enteredId) === false) {
       console.log("No users were found with that ID");
-      viewState = "Users";
+      viewState = "Pre Login";
       return;
     }
     const userFields = ["Name", "Email", "Role", "Organizations", "Projects", "Teams", "Tasks", "Comments"];
