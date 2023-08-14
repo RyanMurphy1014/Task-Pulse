@@ -179,8 +179,6 @@ function usersView() {
   }
   if (index === -1) {
     viewState = "Post Login";
-  } else {
-    viewState = "Users";
   }
 
   function userLookup() {

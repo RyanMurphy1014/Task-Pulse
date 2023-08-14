@@ -1,11 +1,12 @@
-//const databaseImplementation = require("../infra/db/mongoDbImplementation");
+//Implementation imports
 
+const databaseImplementationCredentials = require("../infra/db/mockCredentials");
 const { user } = require("../entities/user");
+const databaseImplementationUsers = require("../infra/db/mockUsers");
 
 //Credentials
 function login(username, password) {
-  const databaseImplementation = require("../infra/db/mockCredentials");
-  const attemptedLogin = databaseImplementation.login(username, password);
+  const attemptedLogin = databaseImplementationCredentials.login(username, password);
   if (attemptedLogin != null) {
     return attemptedLogin;
   } else {
@@ -14,8 +15,7 @@ function login(username, password) {
 }
 
 function createUserCredentials(username, password) {
-  const databaseImplementation = require("../infra/db/mockCredentials");
-  if (databaseImplementation.createUserCredentials(username, password) === 1) {
+  if (databaseImplementationCredentials.createUserCredentials(username, password) === 1) {
     return 1;
   } else {
     console.log("Unable to create user.");
@@ -28,13 +28,11 @@ function createUserCredentials(username, password) {
  * @param {number} id - Id of user to lookup in database
  */
 function getUserData(id) {
-  databaseImplementation = require("../infra/db/mockUsers");
-  return databaseImplementation.findUserById(id);
+  return databaseImplementationUsers.findUserById(id);
 }
 
 function searchUsersByName(name) {
-  databaseImplementation = require("../infra/db/mockUsers");
-  return databaseImplementation.searchUsersByName(name);
+  return databaseImplementationUsers.searchUsersByName(name);
 }
 
 function setUserValue(valueBeingChanged, newValue, editedUserId) {
@@ -73,12 +71,10 @@ function setUserValue(valueBeingChanged, newValue, editedUserId) {
 }
 
 function isValidId(id) {
-  const databaseImplementation = require("../infra/db/mockUsers");
-  return databaseImplementation.isValidId(id);
+  return databaseImplementationUsers.isValidId(id);
 }
 
 function deleteUser(id) {
-  const databaseImplementation = require("../infra/db/mockUsers");
-  databaseImplementation.deleteUser(id);
+  databaseImplementationUsers.deleteUser(id);
 }
 module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId, deleteUser };
