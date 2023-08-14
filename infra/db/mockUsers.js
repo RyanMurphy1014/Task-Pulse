@@ -1,4 +1,5 @@
 const { user } = require("../../entities/user");
+const { getUserData } = require("../../interactors/dbInteractor");
 
 let listOfUsers = [];
 listOfUsers.push(new user("101", "Ryan Murphy", "ryan.murphy611@gmail.com", "Admin", "Test Org", "First Proj", "Dev Team 8", null, null));
@@ -37,4 +38,14 @@ function isValidId(id) {
 
   return output;
 }
-module.exports = { findUserById, searchUsersByName, isValidId };
+
+function deleteUser(id) {
+  for (let i = 0; i < listOfUsers.length; i++) {
+    if (listOfUsers[i].id === id) {
+      listOfUsers.splice(i, 1);
+    }
+  }
+  console.log(`User ID:${id} has been successfully removed.`);
+}
+
+module.exports = { findUserById, searchUsersByName, isValidId, deleteUser };

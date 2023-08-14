@@ -204,7 +204,7 @@ function usersView() {
       viewState = "Pre Login";
       return;
     }
-    const userFields = ["Name", "Email", "Role", "Organizations", "Projects", "Teams", "Tasks", "Comments"];
+    const userFields = ["Name", "Email", "Role", "Organizations", "Projects", "Teams", "Tasks", "Comments", "*Delete"];
     index = userInput.keyInSelect(userFields, "Select:");
     if (index === 0) {
       dbInteractor.setUserValue("name", userInput.question("Enter new value:"), enteredId);
@@ -229,6 +229,11 @@ function usersView() {
     }
     if (index === 7) {
       dbInteractor.setUserValue("comments", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 8) {
+      if (userInput.keyInYN("Are you sure you want to delete this user?:")) {
+        dbInteractor.deleteUser(enteredId);
+      }
     }
   }
 }

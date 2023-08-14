@@ -76,4 +76,9 @@ function isValidId(id) {
   const databaseImplementation = require("../infra/db/mockUsers");
   return databaseImplementation.isValidId(id);
 }
-module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId };
+
+function deleteUser(id) {
+  const databaseImplementation = require("../infra/db/mockUsers");
+  databaseImplementation.deleteUser(id);
+}
+module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId, deleteUser };
