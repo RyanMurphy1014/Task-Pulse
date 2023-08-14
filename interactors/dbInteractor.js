@@ -37,4 +37,43 @@ function searchUsersByName(name) {
   return databaseImplementation.searchUsersByName(name);
 }
 
-module.exports = { login, createUserCredentials, getUserData, searchUsersByName };
+function setUserValue(valueBeingChanged, newValue, editedUserId) {
+  if (valueBeingChanged === "name") {
+    getUserData(editedUserId).name = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "email") {
+    getUserData(editedUserId).email = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "role") {
+    getUserData(editedUserId).role = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "organizations") {
+    getUserData(editedUserId).organizations = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "projects") {
+    getUserData(editedUserId).projects = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "teams") {
+    getUserData(editedUserId).teams = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "tasks") {
+    getUserData(editedUserId).tasks = newValue;
+    console.log("Change Successful!");
+  }
+  if (valueBeingChanged === "comments") {
+    getUserData(editedUserId).comments = newValue;
+    console.log("Change Successful!");
+  }
+}
+
+function isValidId(id) {
+  const databaseImplementation = require("../infra/db/mockUsers");
+  return databaseImplementation.isValidId(id);
+}
+module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId };

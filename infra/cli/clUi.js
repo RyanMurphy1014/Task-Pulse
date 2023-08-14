@@ -53,15 +53,15 @@ displayTitle();
 let activeUser;
 
 const loginInteractor = require("../../interactors/loginInteractor");
+const dbInteractor = require("../../interactors/dbInteractor");
 const { user } = require("../../entities/user");
-const { json } = require("express");
 
 const preLoginOptions = ["Login", "Register"];
-const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations", "Logout"];
+const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations"];
 
 //State Flags
 let isRunning = true;
-let viewState = "Pre Login";
+let viewState = "Post Login";
 while (isRunning) {
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   switch (viewState) {
@@ -161,18 +161,78 @@ function postLogin() {
   if (index === 4) {
     viewState = "Organizations";
   }
-  if (index === 5) {
+  if (index === -1) {
     logout();
   }
 }
 
 function usersView() {
-  const dbInteractor = require("../../interactors/dbInteractor");
-  let userToLookup = userInput.question("Enter name or ID of a User to lookup:");
-  if (userToLookup.charAt(0) <= "9" && userToLookup.charAt(0) >= "0") {
-    console.log(dbInteractor.getUserData(userToLookup).toString());
-  } else {
-    console.log(JSON.stringify(dbInteractor.searchUsersByName(userToLookup)));
+  const userViewOptions = ["Lookup", "Edit"];
+
+  let index = userInput.keyInSelect(userViewOptions, "Select:");
+
+  if (index === 0) {
+    userLookup();
   }
-  viewState = "Post Login";
+  if (index === 1) {
+    editUser();
+  }
+  if (index === -1) {
+    viewState = "Post Login";
+  } else {
+    viewState = "Users";
+  }
+
+  function userLookup() {
+    let userToLookup = userInput.question("Enter name or ID of a User to lookup:");
+
+    if (dbInteractor.isValidId(userToLookup)) {
+      if (userToLookup.charAt(0) <= "9" && userToLookup.charAt(0) >= "0") {
+        if (dbInteractor.getUserData(userToLookup) != null) {
+          console.log(dbInteractor.getUserData(userToLookup).toString());
+        } else {
+          console.log(`No results for ID:${userToLookup}`);
+        }
+      } else {
+        console.log(JSON.stringify(dbInteractor.searchUsersByName(userToLookup)));
+      }
+    } else {
+      console.log("That is an invalid id number.");
+    }
+  }
+
+  function editUser() {
+    const enteredId = userInput.question("Enter ID of User you want to edit: ");
+    if (dbInteractor.isValidId(enteredId) === false) {
+      console.log("No users were found with that ID");
+      viewState = "Users";
+      return;
+    }
+    const userFields = ["Name", "Email", "Role", "Organizations", "Projects", "Teams", "Tasks", "Comments"];
+    index = userInput.keyInSelect(userFields, "Select:");
+    if (index === 0) {
+      dbInteractor.setUserValue("name", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 1) {
+      dbInteractor.setUserValue("email", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 2) {
+      dbInteractor.setUserValue("role", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 3) {
+      dbInteractor.setUserValue("organizations", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 4) {
+      dbInteractor.setUserValue("projects", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 5) {
+      dbInteractor.setUserValue("teams", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 6) {
+      dbInteractor.setUserValue("tasks", userInput.question("Enter new value:"), enteredId);
+    }
+    if (index === 7) {
+      dbInteractor.setUserValue("comments", userInput.question("Enter new value:"), enteredId);
+    }
+  }
 }

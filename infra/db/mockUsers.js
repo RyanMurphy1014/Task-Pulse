@@ -25,4 +25,16 @@ function searchUsersByName(name) {
   return output;
 }
 
-module.exports = { findUserById, searchUsersByName };
+function isValidId(id) {
+  let output;
+  listOfUsers.forEach((element) => {
+    if (element.id === id) {
+      output = true;
+    } else {
+      output = false;
+    }
+  });
+
+  return output;
+}
+module.exports = { findUserById, searchUsersByName, isValidId };
