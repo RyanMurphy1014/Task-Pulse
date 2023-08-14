@@ -53,6 +53,8 @@ displayTitle();
 let activeUser;
 
 const loginInteractor = require("../../interactors/loginInteractor");
+const { user } = require("../../entities/user");
+const { json } = require("express");
 
 const preLoginOptions = ["Login", "Register"];
 const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations", "Logout"];
@@ -60,117 +62,115 @@ const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations"
 //State Flags
 let isRunning = true;
 let viewState = "Pre Login";
-while(isRunning){
+while (isRunning) {
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  switch(viewState){
+  switch (viewState) {
     //Select a view state to go to the correct submenu. Changes occur after while loop reiterates.
-    
+
     case "Pre Login":
       preLogin();
-      
+
       break;
     case "Post Login":
-     postLogin(); 
-    break;
-    
+      postLogin();
+      break;
+
     case "Users":
       usersView();
-    break;
-    
+      break;
+
     case "Tasks":
       tasksView();
-    break;
+      break;
 
     case "Teams":
-        teamsView();
-    break;
+      teamsView();
+      break;
 
     case "Projects":
-        projectsView();
-    break;
+      projectsView();
+      break;
 
     case "Organizations":
-        organizationsView();
-    break;
+      organizationsView();
+      break;
 
     default:
       preLogin();
-    break;
+      break;
   }
 }
 
-
-
+//End of program
 process.exit();
 
-
-
-
 //
-function attemptLogin(){
-let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
-  if(attemptedLogin != null){
+function attemptLogin() {
+  let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
+  if (attemptedLogin != null) {
     activeUser = attemptedLogin;
     console.log("Successful Login");
-    viewState = "Post Login"
-  }else{
+    viewState = "Post Login";
+  } else {
     console.log("Bad login");
   }
 }
 
-function preLogin(){
- 
+function preLogin() {
   let index = userInput.keyInSelect(preLoginOptions, "Select:");
-    //Login
-    if (index === 0) {
-      attemptLogin();  
-    }
+  //Login
+  if (index === 0) {
+    attemptLogin();
+  }
 
-    //Register
-    if (index === 1) {
-      register();
-    }
-    //Leave
-    if(index === -1){
-      console.log("Goodbye!");
-    isRunning = false; 
-    }
+  //Register
+  if (index === 1) {
+    register();
+  }
+  //Leave
+  if (index === -1) {
+    console.log("Goodbye!");
+    isRunning = false;
+  }
 }
 
-function register(){
+function register() {
   loginInteractor.createUserCredentials(userInput.question("Username: "), userInput.question("Password: "));
 }
 
-function logout(){
+function logout() {
   viewState = "Pre Login";
   activeUser = null;
 }
 
-function postLogin(){
-index = userInput.keyInSelect(postLoginOptions, "Select:");
+function postLogin() {
+  index = userInput.keyInSelect(postLoginOptions, "Select:");
 
-
-      if(index === 0){
-
-      }
-      if(index === 1){
-
-      }
-      if(index === 2){
-
-      }
-      if(index === 3){
-
-      }
-      if(index === 4){
-
-      }
-      if(index === 5){
-        logout();
-      }
+  if (index === 0) {
+    viewState = "Users";
+  }
+  if (index === 1) {
+    viewState = "Tasks";
+  }
+  if (index === 2) {
+    viewState = "Teams";
+  }
+  if (index === 3) {
+    viewState = "Projects";
+  }
+  if (index === 4) {
+    viewState = "Organizations";
+  }
+  if (index === 5) {
+    logout();
+  }
 }
 
-
-function usersView(){
-  const userViewOptions = [""]
+function usersView() {
+  const dbInteractor = require("../../interactors/dbInteractor");
+  let userToLookup = userInput.question("Enter name or ID of a User to lookup:");
+  if (userToLookup.charAt(0) <= "9" && userToLookup.charAt(0) >= "0") {
+    console.log(JSON.stringify(dbInteractor.getUserData(userToLookup)));
+  }
+  viewState = "Post Login";
 }
