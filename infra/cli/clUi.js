@@ -61,7 +61,7 @@ const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations"
 
 //State Flags
 let isRunning = true;
-let viewState = "Post Login";
+let viewState = "Pre Login";
 while (isRunning) {
   console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
   switch (viewState) {
@@ -108,7 +108,7 @@ process.exit();
 function attemptLogin() {
   let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
   if (attemptedLogin != null) {
-    activeUser = attemptedLogin;
+    activeUser = dbInteractor.getUserData(attemptedLogin.linkedUser);
     console.log("Successful Login");
     viewState = "Post Login";
   } else {
@@ -144,6 +144,8 @@ function logout() {
 }
 
 function postLogin() {
+  console.log(`Logged in User: ${activeUser.name}`);
+  console.log(`Current Organization: ${activeUser.organizations[0]}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
   if (index === 0) {
@@ -241,4 +243,38 @@ function usersView() {
     }
     return false;
   }
+}
+
+function organizationsView() {
+  let formattedOrganizations = "";
+  activeUser.organizations.forEach((element) => {
+    formattedOrganizations += element + " ";
+  });
+  console.log(`Your organizations: ${formattedOrganizations}`);
+
+  const organizationsViewOptions = ["Change Active Organization", "Edit Active Organization", "Create Organization"];
+  let index = userInput.keyInSelect(organizationsView, "Select:");
+  if (index === 0) {
+    changeOrganization();
+  }
+  if (index === 1) {
+    editOrganization();
+  }
+  if (index === 2) {
+    createOrganization();
+  }
+
+  viewState = "Post Login";
+
+  //Under construction functions
+  function changeOrganization() {}
+  function editOrganization() {}
+  function createOrganization() {}
+}
+
+function isAdmin(user) {
+  if (user.role === "Admin") {
+    return true;
+  }
+  return false;
 }

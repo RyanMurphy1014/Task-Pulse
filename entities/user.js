@@ -4,11 +4,11 @@ class user {
   email;
   role;
 
-  organizations;
-  projects;
-  teams;
-  tasks;
-  comments;
+  organizations = [];
+  projects = [];
+  teams = [];
+  tasks = [];
+  comments = [];
 
   constructor(id, name, email, role, organizations, projects, teams, tasks, comments) {
     this.id = id;
@@ -16,11 +16,11 @@ class user {
     this.email = email;
     this.role = role;
 
-    this.organizations = organizations;
-    this.projects = projects;
-    this.teams = teams;
-    this.tasks = tasks;
-    this.comments = comments;
+    this.organizations.push(organizations);
+    this.projects.push(projects);
+    this.teams.push(teams);
+    this.tasks.push(tasks);
+    this.comments.push(comments);
   }
 
   toString() {
