@@ -181,17 +181,18 @@ function usersView() {
     viewState = "Post Login";
   }
 
+  //Nested helper functions
   function userLookup() {
-    let userIdToLookup = userInput.question("Enter name or ID of a User to lookup:");
+    let lookupParameter = userInput.question("Enter name or ID of a User to lookup:");
 
-    if (userIdToLookup.charAt(0) <= "9" && userIdToLookup.charAt(0) >= "0") {
-      if (dbInteractor.getUserData(userIdToLookup) != null) {
-        console.log(dbInteractor.getUserData(userIdToLookup).toString());
+    if (isANumber(lookupParameter)) {
+      if (dbInteractor.getUserData(lookupParameter) != null) {
+        console.log(dbInteractor.getUserData(lookupParameter).toString());
       } else {
-        console.log(`No results for ID:${userIdToLookup}`);
+        console.log(`No results for ID:${lookupParameter}`);
       }
     } else {
-      console.log(dbInteractor.searchUsersByName(userIdToLookup).toString());
+      console.log(dbInteractor.searchUsersByName(lookupParameter).toString());
     }
   }
 
@@ -233,5 +234,11 @@ function usersView() {
         dbInteractor.deleteUser(enteredId);
       }
     }
+  }
+  function isANumber(input) {
+    if (input.charAt(0) <= "9" && input.charAt(0) >= "0") {
+      return true;
+    }
+    return false;
   }
 }

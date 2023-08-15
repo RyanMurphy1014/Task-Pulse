@@ -19,7 +19,7 @@ function findUserById(id) {
 function searchUsersByName(name) {
   let output = [];
   listOfUsers.forEach((element) => {
-    if (element.name.includes(name)) {
+    if (element.name.toLowerCase().includes(name.toLowerCase())) {
       output.push(element);
     }
   });
