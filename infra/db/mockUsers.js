@@ -2,7 +2,7 @@ const { user } = require("../../entities/user");
 const { getUserData } = require("../../interactors/dbInteractor");
 
 let listOfUsers = [];
-listOfUsers.push(new user("101", "Ryan Murphy", "ryan.murphy611@gmail.com", "Admin", "Test Org", "First Proj", "Dev Team 8", null, null));
+listOfUsers.push(new user("101", "Ryan Murphy", "ryan.murphy611@gmail.com", "Admin", ["Test Org", "Second Org"], "First Proj", "Dev Team 8", null, null));
 
 function findUserById(id) {
   let output;

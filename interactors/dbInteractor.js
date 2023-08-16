@@ -34,7 +34,12 @@ function getUserData(id) {
 function searchUsersByName(name) {
   return databaseImplementationUsers.searchUsersByName(name);
 }
-
+/**
+ *
+ * @param {String} valueBeingChanged Must be specifc option defined inside this method
+ * @param {String} newValue
+ * @param {String} editedUserId
+ */
 function setUserValue(valueBeingChanged, newValue, editedUserId) {
   if (valueBeingChanged === "name") {
     getUserData(editedUserId).name = newValue;

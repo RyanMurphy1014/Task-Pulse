@@ -51,6 +51,7 @@ function displayTitle(){
 displayTitle();
 
 let activeUser;
+let activeOrganization;
 
 const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
@@ -109,6 +110,7 @@ function attemptLogin() {
   let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
   if (attemptedLogin != null) {
     activeUser = dbInteractor.getUserData(attemptedLogin.linkedUser);
+    activeOrganization = activeUser.organizations[0];
     console.log("Successful Login");
     viewState = "Post Login";
   } else {
@@ -141,11 +143,12 @@ function register() {
 function logout() {
   viewState = "Pre Login";
   activeUser = null;
+  activeOrganization = null;
 }
 
 function postLogin() {
   console.log(`Logged in User: ${activeUser.name}`);
-  console.log(`Current Organization: ${activeUser.organizations[0]}`);
+  console.log(`Current Organization: ${activeOrganization}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
   if (index === 0) {
@@ -246,14 +249,10 @@ function usersView() {
 }
 
 function organizationsView() {
-  let formattedOrganizations = "";
-  activeUser.organizations.forEach((element) => {
-    formattedOrganizations += element + " ";
-  });
-  console.log(`Your organizations: ${formattedOrganizations}`);
+  console.log("Your organizations: " + formatOrganizations());
 
   const organizationsViewOptions = ["Change Active Organization", "Edit Active Organization", "Create Organization"];
-  let index = userInput.keyInSelect(organizationsView, "Select:");
+  let index = userInput.keyInSelect(organizationsViewOptions, "Select:");
   if (index === 0) {
     changeOrganization();
   }
@@ -267,9 +266,37 @@ function organizationsView() {
   viewState = "Post Login";
 
   //Under construction functions
-  function changeOrganization() {}
-  function editOrganization() {}
-  function createOrganization() {}
+  function changeOrganization() {
+    let newActiveOrganization = userInput.keyInSelect(activeUser.organizations, "Select:");
+    activeOrganization = activeUser.organizations[newActiveOrganization];
+  }
+  function editOrganization() {
+    let activeOrgPlacehodler = getActiveOrgIndex();
+    activeUser.organizations[getActiveOrgIndex()] = userInput.question("Enter new name for organization: ");
+    dbInteractor.setUserValue("organizations", activeUser.organizations, activeUser.id);
+    activeOrganization = activeUser.organizations[activeOrgPlacehodler];
+  }
+  function createOrganization() {
+    activeUser.organizations.push(userInput.question("Enter new name for organization: "));
+    dbInteractor.setUserValue("organizations", activeUser.organizations, activeUser.id);
+    activeOrganization = activeUser.organizations[activeUser.organizations.length - 1];
+  }
+
+  function getActiveOrgIndex() {
+    return activeUser.organizations.indexOf(activeOrganization);
+  }
+  function formatOrganizations() {
+    let outputString = "";
+    const activeIndex = getActiveOrgIndex();
+    for (let i = 0; i < activeUser.organizations.length; i++) {
+      if (i === activeIndex) {
+        outputString += "[" + activeUser.organizations[i] + "] ";
+      } else {
+        outputString += activeUser.organizations[i];
+      }
+    }
+    return outputString;
+  }
 }
 
 function isAdmin(user) {

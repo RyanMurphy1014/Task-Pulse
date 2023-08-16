@@ -16,11 +16,11 @@ class user {
     this.email = email;
     this.role = role;
 
-    this.organizations.push(organizations);
-    this.projects.push(projects);
-    this.teams.push(teams);
-    this.tasks.push(tasks);
-    this.comments.push(comments);
+    this.organizations = organizations;
+    this.projects = projects;
+    this.teams = teams;
+    this.tasks = tasks;
+    this.comments = comments;
   }
 
   toString() {
