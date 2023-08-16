@@ -52,6 +52,7 @@ displayTitle();
 
 let activeUser;
 let activeOrganization;
+let activeProject;
 
 const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
@@ -111,6 +112,7 @@ function attemptLogin() {
   if (attemptedLogin != null) {
     activeUser = dbInteractor.getUserData(attemptedLogin.linkedUser);
     activeOrganization = activeUser.organizations[0];
+    activeProject = activeUser.projects[0];
     console.log("Successful Login");
     viewState = "Post Login";
   } else {
@@ -149,6 +151,7 @@ function logout() {
 function postLogin() {
   console.log(`Logged in User: ${activeUser.name}`);
   console.log(`Current Organization: ${activeOrganization}`);
+  console.log(`Current Project: ${activeProject}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
   if (index === 0) {
@@ -304,4 +307,35 @@ function isAdmin(user) {
     return true;
   }
   return false;
+}
+
+function projectsView() {
+  const projectsViewOptions = ["Change Project", "Create Project", "Edit Project"];
+  let index = userInput.keyInSelect(projectsViewOptions, "Select:");
+
+  console.log(`Active Project: ${activeProject}`);
+  if (index === 0) {
+    changeProject();
+  }
+  if (index === 1) {
+    createProject();
+  }
+  if (index === 2) {
+    editProject();
+  }
+
+  viewState = "Post Login";
+
+  function changeProject() {
+    let newActiveProject = userInput.keyInSelect(activeUser.projects);
+    activeProject = activeUser.projects[newActiveProject];
+  }
+
+  function createProject() {
+    activeUser.projects.push(userInput.question("Enter name for new project:"));
+    dbInteractor.setUserValue("projects", activeUser.projects, activeUser.id);
+    activeProject = activeUser.projects[activeUser.projects.length - 1];
+  }
+
+  function editProject() {}
 }
