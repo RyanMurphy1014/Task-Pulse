@@ -151,8 +151,8 @@ function logout() {
 
 function postLogin() {
   console.log(`Logged in User: ${activeUser.name}`);
-  console.log(`Current Organization: ${activeOrganization}`);
-  console.log(`Current Project: ${activeProject}`);
+  console.log(`Current Organization: ${activeOrganization.name}`);
+  console.log(`Current Project: ${activeProject.name}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
   if (index === 0) {
@@ -195,8 +195,9 @@ function usersView() {
     let lookupParameter = userInput.question("Enter name or ID of a User to lookup:");
 
     if (isANumber(lookupParameter)) {
-      if (dbInteractor.getUserData(lookupParameter) != null) {
-        console.log(dbInteractor.getUserData(lookupParameter).toString());
+      let userToDisplay = dbInteractor.getUserData(activeOrganization.name, lookupParameter);
+      if (userToDisplay != null) {
+        console.log(userToDisplay.toString());
       } else {
         console.log(`No results for ID:${lookupParameter}`);
       }

@@ -28,8 +28,8 @@ function createUserCredentials(username, password) {
  * @returns User object with populated info from database
  * @param {number} id - Id of user to lookup in database
  */
-function getUserData(id) {
-  return databaseImplementationUsers.findUserById(id);
+function getUserData(organizationName, id) {
+  return databaseImplementationOrganizations.findUserById(organizationName, id);
 }
 
 function searchUsersByName(name) {
