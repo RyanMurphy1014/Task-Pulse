@@ -1,14 +1,9 @@
 class organization {
-  projects;
+  projects = [];
   name;
-  teams;
-  owner;
+  teams = [];
 
-  //@params projects and teams are arrays
-  constructor(projects, name, teams, owner) {
-    this.projects = projects;
+  constructor(name) {
     this.name = name;
-    this.teams = teams;
-    this.owner = owner;
   }
 }

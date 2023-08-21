@@ -1,12 +1,11 @@
 class project {
   name;
   description;
-  tasks;
+  teamsAssigned = [];
 
   //@parmas task is array
-  constructor(name, description, tasks) {
+  constructor(name, description) {
     this.name = name;
     this.description = description;
-    this.tasks = tasks;
   }
 }

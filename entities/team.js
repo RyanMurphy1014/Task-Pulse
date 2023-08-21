@@ -1,7 +1,7 @@
 class team {
   name;
   description;
-  members;
+  members = [];
 
   //@params members is array
   constructor(name, description, members) {
