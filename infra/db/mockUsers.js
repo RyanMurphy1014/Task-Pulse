@@ -1,3 +1,4 @@
+//Temporarily deprecated file
 const { user } = require("../../entities/user");
 const { getUserData } = require("../../interactors/dbInteractor");
 

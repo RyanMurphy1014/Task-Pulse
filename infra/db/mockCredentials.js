@@ -1,26 +1,25 @@
 class mockCredentials {
+  organizationName;
   username;
   password;
-  linkedUser;
+  idOfUser;
 
-  constructor(username, password, linkedUser) {
+  constructor(organizationName, username, password, linkedUser) {
+    this.organizationName = organizationName;
     this.username = username;
     this.password = password;
-    this.linkedUser = linkedUser;
+    this.idOfUser = linkedUser;
   }
 }
 
 let listOfUsers = [];
-listOfUsers.push(new mockCredentials("ryan", "m1234", "101"));
-listOfUsers.push(new mockCredentials("kali", "k1234", "202"));
+listOfUsers.push(new mockCredentials("Backcountry", "ryan", "m1234", "101"));
+listOfUsers.push(new mockCredentials("Backcountry", "kali", "k1234", "202"));
 
-function login(username, password) {
-  const loginAttempt = new mockCredentials(username, password, "0");
+function login(organizationName, username, password) {
   const foundIndex = listOfUsers.findIndex((element) => {
-    if (element.username === loginAttempt.username) {
-      if (element.password === loginAttempt.password) {
-        return true;
-      }
+    if (element.organizationName === organizationName && element.username === username && element.password === password) {
+      return true;
     } else {
       return false;
     }

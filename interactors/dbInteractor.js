@@ -3,10 +3,11 @@
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
 const { user } = require("../entities/user");
 const databaseImplementationUsers = require("../infra/db/mockUsers");
+const databaseImplementationOrganizations = require("../infra/db/mockOrganizations");
 
 //Credentials
-function login(username, password) {
-  const attemptedLogin = databaseImplementationCredentials.login(username, password);
+function login(organizationName, username, password) {
+  const attemptedLogin = databaseImplementationCredentials.login(organizationName, username, password);
   if (attemptedLogin != null) {
     return attemptedLogin;
   } else {
@@ -82,4 +83,9 @@ function isValidId(id) {
 function deleteUser(id) {
   databaseImplementationUsers.deleteUser(id);
 }
-module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId, deleteUser };
+
+function getOrganization(organizationName) {
+  return databaseImplementationOrganizations.getOrganization(organizationName);
+}
+
+module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId, deleteUser, getOrganization };

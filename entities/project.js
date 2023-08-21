@@ -9,3 +9,5 @@ class project {
     this.description = description;
   }
 }
+
+module.exports = { project };

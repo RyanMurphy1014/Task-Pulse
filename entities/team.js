@@ -4,9 +4,10 @@ class team {
   members = [];
 
   //@params members is array
-  constructor(name, description, members) {
+  constructor(name, description) {
     this.name = name;
     this.description = description;
-    this.members = members;
   }
 }
+
+module.exports = { team };

@@ -108,11 +108,13 @@ process.exit();
 
 //
 function attemptLogin() {
-  let attemptedLogin = loginInteractor.login(userInput.question("Username: "), userInput.question("Password: "));
+  let organizationToLoginTo = userInput.question("Name of organization: ");
+  let attemptedLogin = loginInteractor.login(organizationToLoginTo, userInput.question("Username: "), userInput.question("Password: "));
   if (attemptedLogin != null) {
-    activeUser = dbInteractor.getUserData(attemptedLogin.linkedUser);
-    activeOrganization = activeUser.organizations[0];
-    activeProject = activeUser.projects[0];
+    activeUser = dbInteractor.getUserData(attemptedLogin.idOfUser);
+    activeOrganization = dbInteractor.getOrganization(organizationToLoginTo);
+    console.log(activeOrganization);
+    activeProject = activeOrganization.projects[0];
     console.log("Successful Login");
     viewState = "Post Login";
   } else {

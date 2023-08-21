@@ -7,3 +7,5 @@ class organization {
     this.name = name;
   }
 }
+
+module.exports = { organization };
