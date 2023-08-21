@@ -109,11 +109,10 @@ process.exit();
 //
 function attemptLogin() {
   let organizationToLoginTo = userInput.question("Name of organization: ");
-  let attemptedLogin = loginInteractor.login(organizationToLoginTo, userInput.question("Username: "), userInput.question("Password: "));
-  if (attemptedLogin != null) {
-    activeUser = dbInteractor.getUserData(attemptedLogin.idOfUser);
+  let loginAttempt = loginInteractor.login(organizationToLoginTo, userInput.question("Username: "), userInput.question("Password: "));
+  if (loginAttempt != null) {
     activeOrganization = dbInteractor.getOrganization(organizationToLoginTo);
-    console.log(activeOrganization);
+    activeUser = activeOrganization.getUser(loginAttempt.idOfUser);
     activeProject = activeOrganization.projects[0];
     console.log("Successful Login");
     viewState = "Post Login";
