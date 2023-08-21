@@ -2,7 +2,6 @@
 
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
 const { user } = require("../entities/user");
-const databaseImplementationUsers = require("../infra/db/mockUsers");
 const databaseImplementationOrganizations = require("../infra/db/mockOrganizations");
 
 //Credentials
@@ -32,9 +31,6 @@ function getUserData(organizationName, id) {
   return databaseImplementationOrganizations.findUserById(organizationName, id);
 }
 
-function searchUsersByName(name) {
-  return databaseImplementationUsers.searchUsersByName(name);
-}
 /**
  *
  * @param {String} valueBeingChanged Must be specifc option defined inside this method
@@ -91,4 +87,4 @@ function getOrganization(organizationName) {
 function writeOrganizationInfo(organizationName, organizationObject) {
   databaseImplementationOrganizations.writeOrganizationInfo(organizationName, organizationObject);
 }
-module.exports = { login, createUserCredentials, getUserData, searchUsersByName, setUserValue, isValidId, deleteUser, getOrganization, writeOrganizationInfo };
+module.exports = { login, createUserCredentials, getUserData, setUserValue, isValidId, deleteUser, getOrganization, writeOrganizationInfo };

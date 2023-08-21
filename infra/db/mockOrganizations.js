@@ -40,4 +40,5 @@ function getIdexInOrgList(organizationName) {
 function writeOrganizationInfo(organizationName, organizationObject) {
   organizations[getIdexInOrgList(organizationName)] = organizationObject;
 }
+
 module.exports = { getOrganization, findUserById, writeOrganizationInfo };

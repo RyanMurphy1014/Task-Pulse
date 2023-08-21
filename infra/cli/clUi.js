@@ -203,7 +203,7 @@ function usersView() {
         console.log(`No results for ID:${lookupParameter}`);
       }
     } else {
-      console.log(dbInteractor.searchUsersByName(lookupParameter).toString());
+      console.log(activeOrganization.getUserByName(lookupParameter));
     }
   }
 
