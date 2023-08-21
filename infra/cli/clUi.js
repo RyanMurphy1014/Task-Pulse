@@ -315,7 +315,7 @@ function projectsView() {
   const projectsViewOptions = ["Change Project", "Create Project", "Edit Project"];
   let index = userInput.keyInSelect(projectsViewOptions, "Select:");
 
-  console.log(`Active Project: ${activeProject}`);
+  console.log(`Active Project: ${activeProject.name}`);
   if (index === 0) {
     changeProject();
   }
@@ -329,8 +329,10 @@ function projectsView() {
   viewState = "Post Login";
 
   function changeProject() {
-    let newActiveProject = userInput.keyInSelect(activeUser.projects);
-    activeProject = activeUser.projects[newActiveProject];
+    let indexOfNewActiveProject = userInput.keyInSelect(activeOrganization.projects);
+    if (indexOfNewActiveProject != -1) {
+      activeProject = activeOrganization.projects[indexOfNewActiveProject];
+    }
   }
 
   function createProject() {

@@ -8,6 +8,10 @@ class project {
     this.name = name;
     this.description = description;
   }
+
+  toString() {
+    return this.name;
+  }
 }
 
 module.exports = { project };
