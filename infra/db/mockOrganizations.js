@@ -36,4 +36,8 @@ function getIdexInOrgList(organizationName) {
   });
   return index;
 }
-module.exports = { getOrganization, findUserById };
+
+function writeOrganizationInfo(organizationName, organizationObject) {
+  organizations[getIdexInOrgList(organizationName)] = organizationObject;
+}
+module.exports = { getOrganization, findUserById, writeOrganizationInfo };

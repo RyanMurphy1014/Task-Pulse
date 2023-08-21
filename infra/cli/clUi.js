@@ -1,3 +1,4 @@
+const { project } = require("../../entities/project");
 const userInput = require("readline-sync");
 // prettier-ignore
 function displayTitle(){
@@ -336,10 +337,22 @@ function projectsView() {
   }
 
   function createProject() {
-    activeUser.projects.push(userInput.question("Enter name for new project:"));
-    dbInteractor.setUserValue("projects", activeUser.projects, activeUser.id);
-    activeProject = activeUser.projects[activeUser.projects.length - 1];
+    if (activeUser.role === "Admin") {
+      activeOrganization.projects.push(new project(userInput.question("Name for new project:"), userInput.question("Description: ")));
+      activeProject = activeOrganization.projects[activeOrganization.projects.length - 1];
+      writeOrganizationInfo();
+    } else {
+      console.log("You do not have the required privledges");
+    }
   }
 
   function editProject() {}
+}
+
+function readOrganizationInfo() {
+  activeOrganization = dbInteractor.getOrganization(activeOrganization.name);
+}
+
+function writeOrganizationInfo() {
+  dbInteractor.writeOrganizationInfo(activeOrganization.name, activeOrganization);
 }
