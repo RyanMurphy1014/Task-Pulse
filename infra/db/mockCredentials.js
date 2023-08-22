@@ -13,8 +13,8 @@ class mockCredentials {
 }
 
 let listOfUsers = [];
-listOfUsers.push(new mockCredentials("Backcountry", "ryan", "m1234", "101"));
-listOfUsers.push(new mockCredentials("Backcountry", "kali", "k1234", "202"));
+listOfUsers.push(new mockCredentials("org", "ryan", "m1234", "101"));
+listOfUsers.push(new mockCredentials("org", "kali", "k1234", "202"));
 
 function login(organizationName, username, password) {
   const foundIndex = listOfUsers.findIndex((element) => {

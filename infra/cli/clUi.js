@@ -48,7 +48,6 @@ function displayTitle(){
  console.log("                                  ~~                       \\/____/          \\/____/                  \\/____/         ");
  console.log("                                                                                                                     ");
 }
-
 displayTitle();
 
 let activeUser;
@@ -346,7 +345,18 @@ function projectsView() {
     }
   }
 
-  function editProject() {}
+  function editProject() {
+    let choiceIndex = userInput.keyInSelect(["Name", "Description"], "What would you like to change in active project:")
+    if(choiceIndex === 0){
+      activeProject.name = userInput.question("New name: ");
+    }
+    if(choiceIndex === 1){
+      activeProject.description = userInput.question("New Description: ");
+    }
+    writeOrganizationInfo();
+
+  }
+  
 }
 
 function readOrganizationInfo() {
@@ -354,5 +364,5 @@ function readOrganizationInfo() {
 }
 
 function writeOrganizationInfo() {
-  dbInteractor.writeOrganizationInfo(activeOrganization.name, activeOrganization);
+  dbInteractor.writeOrganizationInfo(activeOrganization);
 }

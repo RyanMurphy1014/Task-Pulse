@@ -84,7 +84,7 @@ function getOrganization(organizationName) {
   return databaseImplementationOrganizations.getOrganization(organizationName);
 }
 
-function writeOrganizationInfo(organizationName, organizationObject) {
-  databaseImplementationOrganizations.writeOrganizationInfo(organizationName, organizationObject);
+function writeOrganizationInfo(organizationObject) {
+  databaseImplementationOrganizations.writeOrganizationInfo(organizationObject);
 }
 module.exports = { login, createUserCredentials, getUserData, setUserValue, isValidId, deleteUser, getOrganization, writeOrganizationInfo };
