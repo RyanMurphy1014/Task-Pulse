@@ -5,7 +5,7 @@ const { user } = require("../../entities/user");
 
 let organizations = [];
 //Backcountry
-let backcountry = new organization("Backcountry");
+let backcountry = new organization("org");
 
 let defaultProject = new project("Default Project", "Base project to mock test");
 backcountry.projects.push(defaultProject);
@@ -37,8 +37,8 @@ function getIdexInOrgList(organizationName) {
   return index;
 }
 
-function writeOrganizationInfo(organizationName, organizationObject) {
-  organizations[getIdexInOrgList(organizationName)] = organizationObject;
+function writeOrganizationInfo(organizationObject) {
+  organizations[getIdexInOrgList(organizationObject.name)] = organizationObject;
 }
 
 module.exports = { getOrganization, findUserById, writeOrganizationInfo };
