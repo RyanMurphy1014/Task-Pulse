@@ -59,7 +59,7 @@ const dbInteractor = require("../../interactors/dbInteractor");
 const { user } = require("../../entities/user");
 
 const preLoginOptions = ["Login", "Register"];
-const postLoginOptions = ["Users", "Tasks", "Teams", "Projects", "Organizations"];
+const postLoginOptions = ["Users", "Tasks", "Teams", "Projects"];
 
 //State Flags
 let isRunning = true;
@@ -91,10 +91,6 @@ while (isRunning) {
 
     case "Projects":
       projectsView();
-      break;
-
-    case "Organizations":
-      organizationsView();
       break;
 
     default:
@@ -166,9 +162,6 @@ function postLogin() {
   }
   if (index === 3) {
     viewState = "Projects";
-  }
-  if (index === 4) {
-    viewState = "Organizations";
   }
   if (index === -1) {
     logout();
@@ -253,56 +246,7 @@ function usersView() {
   }
 }
 
-function organizationsView() {
-  console.log("Your organizations: " + formatOrganizations());
 
-  const organizationsViewOptions = ["Change Active Organization", "Edit Active Organization", "Create Organization"];
-  let index = userInput.keyInSelect(organizationsViewOptions, "Select:");
-  if (index === 0) {
-    changeOrganization();
-  }
-  if (index === 1) {
-    editOrganization();
-  }
-  if (index === 2) {
-    createOrganization();
-  }
-
-  viewState = "Post Login";
-
-  //Under construction functions
-  function changeOrganization() {
-    let newActiveOrganization = userInput.keyInSelect(activeUser.organizations, "Select:");
-    activeOrganization = activeUser.organizations[newActiveOrganization];
-  }
-  function editOrganization() {
-    let activeOrgPlacehodler = getActiveOrgIndex();
-    activeUser.organizations[getActiveOrgIndex()] = userInput.question("Enter new name for organization: ");
-    dbInteractor.setUserValue("organizations", activeUser.organizations, activeUser.id);
-    activeOrganization = activeUser.organizations[activeOrgPlacehodler];
-  }
-  function createOrganization() {
-    activeUser.organizations.push(userInput.question("Enter new name for organization: "));
-    dbInteractor.setUserValue("organizations", activeUser.organizations, activeUser.id);
-    activeOrganization = activeUser.organizations[activeUser.organizations.length - 1];
-  }
-
-  function getActiveOrgIndex() {
-    return activeUser.organizations.indexOf(activeOrganization);
-  }
-  function formatOrganizations() {
-    let outputString = "";
-    const activeIndex = getActiveOrgIndex();
-    for (let i = 0; i < activeUser.organizations.length; i++) {
-      if (i === activeIndex) {
-        outputString += "[" + activeUser.organizations[i] + "] ";
-      } else {
-        outputString += activeUser.organizations[i];
-      }
-    }
-    return outputString;
-  }
-}
 
 function isAdmin(user) {
   if (user.role === "Admin") {
