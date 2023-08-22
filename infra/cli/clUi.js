@@ -1,4 +1,3 @@
-const { project } = require("../../entities/project");
 const userInput = require("readline-sync");
 // prettier-ignore
 function displayTitle(){
@@ -65,7 +64,9 @@ const postLoginOptions = ["Users", "Tasks", "Teams", "Projects"];
 let isRunning = true;
 let viewState = "Pre Login";
 while (isRunning) {
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+  console.log(
+    "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+  );
   switch (viewState) {
     //Select a view state to go to the correct submenu. Changes occur after while loop reiterates.
 
@@ -105,7 +106,11 @@ process.exit();
 //
 function attemptLogin() {
   let organizationToLoginTo = userInput.question("Name of organization: ");
-  let loginAttempt = loginInteractor.login(organizationToLoginTo, userInput.question("Username: "), userInput.question("Password: "));
+  let loginAttempt = loginInteractor.login(
+    organizationToLoginTo,
+    userInput.question("Username: "),
+    userInput.question("Password: ")
+  );
   if (loginAttempt != null) {
     activeOrganization = dbInteractor.getOrganization(organizationToLoginTo);
     activeUser = activeOrganization.getUser(loginAttempt.idOfUser);
@@ -136,7 +141,10 @@ function preLogin() {
 }
 
 function register() {
-  loginInteractor.createUserCredentials(userInput.question("Username: "), userInput.question("Password: "));
+  loginInteractor.createUserCredentials(
+    userInput.question("Username: "),
+    userInput.question("Password: ")
+  );
 }
 
 function logout() {
@@ -185,10 +193,15 @@ function usersView() {
 
   //Nested helper functions
   function userLookup() {
-    let lookupParameter = userInput.question("Enter name or ID of a User to lookup:");
+    let lookupParameter = userInput.question(
+      "Enter name or ID of a User to lookup:"
+    );
 
     if (isANumber(lookupParameter)) {
-      let userToDisplay = dbInteractor.getUserData(activeOrganization.name, lookupParameter);
+      let userToDisplay = dbInteractor.getUserData(
+        activeOrganization.name,
+        lookupParameter
+      );
       if (userToDisplay != null) {
         console.log(userToDisplay.toString());
       } else {
@@ -206,31 +219,73 @@ function usersView() {
       viewState = "Pre Login";
       return;
     }
-    const userFields = ["Name", "Email", "Role", "Organizations", "Projects", "Teams", "Tasks", "Comments", "*Delete"];
+    const userFields = [
+      "Name",
+      "Email",
+      "Role",
+      "Organizations",
+      "Projects",
+      "Teams",
+      "Tasks",
+      "Comments",
+      "*Delete",
+    ];
     index = userInput.keyInSelect(userFields, "Select:");
     if (index === 0) {
-      dbInteractor.setUserValue("name", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "name",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 1) {
-      dbInteractor.setUserValue("email", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "email",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 2) {
-      dbInteractor.setUserValue("role", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "role",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 3) {
-      dbInteractor.setUserValue("organizations", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "organizations",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 4) {
-      dbInteractor.setUserValue("projects", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "projects",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 5) {
-      dbInteractor.setUserValue("teams", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "teams",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 6) {
-      dbInteractor.setUserValue("tasks", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "tasks",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 7) {
-      dbInteractor.setUserValue("comments", userInput.question("Enter new value:"), enteredId);
+      dbInteractor.setUserValue(
+        "comments",
+        userInput.question("Enter new value:"),
+        enteredId
+      );
     }
     if (index === 8) {
       if (userInput.keyInYN("Are you sure you want to delete this user?:")) {
@@ -246,8 +301,6 @@ function usersView() {
   }
 }
 
-
-
 function isAdmin(user) {
   if (user.role === "Admin") {
     return true;
@@ -256,7 +309,11 @@ function isAdmin(user) {
 }
 
 function projectsView() {
-  const projectsViewOptions = ["Change Project", "Create Project", "Edit Project"];
+  const projectsViewOptions = [
+    "Change Project",
+    "Create Project",
+    "Edit Project",
+  ];
   let index = userInput.keyInSelect(projectsViewOptions, "Select:");
 
   console.log(`Active Project: ${activeProject.name}`);
@@ -273,7 +330,9 @@ function projectsView() {
   viewState = "Post Login";
 
   function changeProject() {
-    let indexOfNewActiveProject = userInput.keyInSelect(activeOrganization.projects);
+    let indexOfNewActiveProject = userInput.keyInSelect(
+      activeOrganization.projects
+    );
     if (indexOfNewActiveProject != -1) {
       activeProject = activeOrganization.projects[indexOfNewActiveProject];
     }
@@ -281,66 +340,85 @@ function projectsView() {
 
   function createProject() {
     if (activeUser.role === "Admin") {
-      activeOrganization.projects.push(new project(userInput.question("Name for new project:"), userInput.question("Description: ")));
-      activeProject = activeOrganization.projects[activeOrganization.projects.length - 1];
-      writeOrganizationInfo();
+      activeOrganization.projects.push(
+        new project(
+          userInput.question("Name for new project:"),
+          userInput.question("Description: ")
+        )
+      );
+      activeProject =
+        activeOrganization.projects[activeOrganization.projects.length - 1];
+      writeOrganizationData();
     } else {
       console.log("You do not have the required privledges");
     }
   }
 
   function editProject() {
-    let choiceIndex = userInput.keyInSelect(["Name", "Description"], "What would you like to change in active project:")
-    if(choiceIndex === 0){
+    let choiceIndex = userInput.keyInSelect(
+      ["Name", "Description"],
+      "What would you like to change in active project:"
+    );
+    if (choiceIndex === 0) {
       activeProject.name = userInput.question("New name: ");
     }
-    if(choiceIndex === 1){
+    if (choiceIndex === 1) {
       activeProject.description = userInput.question("New Description: ");
     }
-    writeOrganizationInfo();
-
+    writeOrganizationData();
   }
-  
 }
 
-function readOrganizationInfo() {
+function readOrganizationData() {
   activeOrganization = dbInteractor.getOrganization(activeOrganization.name);
 }
 
-function writeOrganizationInfo() {
+function writeOrganizationData() {
   dbInteractor.writeOrganizationInfo(activeOrganization);
 }
-function teamsView(){
+
+function writeAndReadOrganizationData() {
+  writeAndReadOrganizationData();
+  readOrganizationData();
+}
+
+function teamsView() {
   viewState = "Teams";
-  const teamsViewUserOptions = ["View Teams", "Create Team", "Edit Team"]
+  const teamsViewUserOptions = ["View Teams", "Create Team", "Edit Team"];
   let userChoice = userInput.keyInSelect(teamsViewUserOptions, "Select: ");
-  if(userChoice === 0){
+  if (userChoice === 0) {
     viewTeams();
   }
-  if(userChoice === 1){
+  if (userChoice === 1) {
     createTeam();
   }
-  if(userChoice === 2){
+  if (userChoice === 2) {
     editTeam();
   }
-  if(userChoice === -1){
+  if (userChoice === -1) {
     viewState = postLogin();
   }
 
-  function viewTeams(){
+  function viewTeams() {
     const teamNames = [];
-    activeOrganization.teams.forEach(element => {
-        teamNames.push(element.name);
+    activeOrganization.teams.forEach((element) => {
+      teamNames.push(element.name);
     });
     let userChoice = userInput.keyInSelect(teamNames, "Select team to view: ");
-    activeOrganization.teams.forEach(e => {
-      e.members.forEach(e => {
+    activeOrganization.teams.forEach((e) => {
+      e.members.forEach((e) => {
         console.log(e.toString());
-      })
-    })
+      });
+    });
   }
 
-  function createTeam(){}
+  function createTeam() {
+    const newTeamName = userInput.question("Name of new team: ");
+    const newTeamDescripiton = userInput.question("Name of new team: ");
+    activeOrganization.createTeam(newTeamName, newTeamDescripiton);
 
-  function editTeam(){}
+    writeAndReadOrganizationData();
+  }
+
+  function editTeam() {}
 }
