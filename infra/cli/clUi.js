@@ -195,7 +195,7 @@ function usersView() {
         console.log(`No results for ID:${lookupParameter}`);
       }
     } else {
-      console.log(activeOrganization.getUserByName(lookupParameter));
+      console.log(activeOrganization.getUserByName(lookupParameter).toString());
     }
   }
 
@@ -309,4 +309,38 @@ function readOrganizationInfo() {
 
 function writeOrganizationInfo() {
   dbInteractor.writeOrganizationInfo(activeOrganization);
+}
+function teamsView(){
+  viewState = "Teams";
+  const teamsViewUserOptions = ["View Teams", "Create Team", "Edit Team"]
+  let userChoice = userInput.keyInSelect(teamsViewUserOptions, "Select: ");
+  if(userChoice === 0){
+    viewTeams();
+  }
+  if(userChoice === 1){
+    createTeam();
+  }
+  if(userChoice === 2){
+    editTeam();
+  }
+  if(userChoice === -1){
+    viewState = postLogin();
+  }
+
+  function viewTeams(){
+    const teamNames = [];
+    activeOrganization.teams.forEach(element => {
+        teamNames.push(element.name);
+    });
+    let userChoice = userInput.keyInSelect(teamNames, "Select team to view: ");
+    activeOrganization.teams.forEach(e => {
+      e.members.forEach(e => {
+        console.log(e.toString());
+      })
+    })
+  }
+
+  function createTeam(){}
+
+  function editTeam(){}
 }

@@ -22,7 +22,6 @@ function getOrganization(organizationName) {
 }
 
 function findUserById(organizationName, id) {
-  console.log(`!!!! ${getIdexInOrgList(organizationName)}`);
   return organizations[getIdexInOrgList(organizationName)].getUser(id);
 }
 

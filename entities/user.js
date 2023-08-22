@@ -23,7 +23,8 @@ class user {
     output += "projects: " + this.projects + "\n";
     output += "teams: " + this.teams + "\n";
     output += "tasks: " + this.tasks + "\n";
-    output += "comments: " + this.comments;
+    output += "comments: " + this.comments + "\n";
+    output += "------------------------------------------"
     return output;
   }
 }
