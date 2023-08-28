@@ -19,12 +19,7 @@ class user {
     output += "name: " + this.name + "\n";
     output += "email: " + this.email + "\n";
     output += "role: " + this.role + "\n";
-    output += "organizations: " + this.organizations + "\n";
-    output += "projects: " + this.projects + "\n";
-    output += "teams: " + this.teams + "\n";
-    output += "tasks: " + this.tasks + "\n";
-    output += "comments: " + this.comments + "\n";
-    output += "------------------------------------------"
+    output += "------------------------------------------";
     return output;
   }
 }

@@ -50,7 +50,7 @@ function displayTitle(){
 displayTitle();
 
 let activeUser;
-let activeOrganization;
+let localOrganizationArtifact;
 let activeProject;
 
 const loginInteractor = require("../../interactors/loginInteractor");
@@ -112,9 +112,11 @@ function attemptLogin() {
     userInput.question("Password: ")
   );
   if (loginAttempt != null) {
-    activeOrganization = dbInteractor.getOrganization(organizationToLoginTo);
-    activeUser = activeOrganization.getUser(loginAttempt.idOfUser);
-    activeProject = activeOrganization.projects[0];
+    localOrganizationArtifact = dbInteractor.getOrganization(
+      organizationToLoginTo
+    );
+    activeUser = localOrganizationArtifact.getUser(loginAttempt.idOfUser);
+    activeProject = localOrganizationArtifact.projects[0];
     console.log("Successful Login");
     viewState = "Post Login";
   } else {
@@ -150,12 +152,12 @@ function register() {
 function logout() {
   viewState = "Pre Login";
   activeUser = null;
-  activeOrganization = null;
+  localOrganizationArtifact = null;
 }
 
 function postLogin() {
   console.log(`Logged in User: ${activeUser.name}`);
-  console.log(`Current Organization: ${activeOrganization.name}`);
+  console.log(`Current Organization: ${localOrganizationArtifact.name}`);
   console.log(`Current Project: ${activeProject.name}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
@@ -199,7 +201,7 @@ function usersView() {
 
     if (isANumber(lookupParameter)) {
       let userToDisplay = dbInteractor.getUserData(
-        activeOrganization.name,
+        localOrganizationArtifact.name,
         lookupParameter
       );
       if (userToDisplay != null) {
@@ -208,7 +210,9 @@ function usersView() {
         console.log(`No results for ID:${lookupParameter}`);
       }
     } else {
-      console.log(activeOrganization.getUserByName(lookupParameter).toString());
+      console.log(
+        localOrganizationArtifact.getUserByName(lookupParameter).toString()
+      );
     }
   }
 
@@ -331,23 +335,26 @@ function projectsView() {
 
   function changeProject() {
     let indexOfNewActiveProject = userInput.keyInSelect(
-      activeOrganization.projects
+      localOrganizationArtifact.projects
     );
     if (indexOfNewActiveProject != -1) {
-      activeProject = activeOrganization.projects[indexOfNewActiveProject];
+      activeProject =
+        localOrganizationArtifact.projects[indexOfNewActiveProject];
     }
   }
 
   function createProject() {
     if (activeUser.role === "Admin") {
-      activeOrganization.projects.push(
+      localOrganizationArtifact.projects.push(
         new project(
           userInput.question("Name for new project:"),
           userInput.question("Description: ")
         )
       );
       activeProject =
-        activeOrganization.projects[activeOrganization.projects.length - 1];
+        localOrganizationArtifact.projects[
+          localOrganizationArtifact.projects.length - 1
+        ];
       writeOrganizationData();
     } else {
       console.log("You do not have the required privledges");
@@ -370,15 +377,17 @@ function projectsView() {
 }
 
 function readOrganizationData() {
-  activeOrganization = dbInteractor.getOrganization(activeOrganization.name);
+  localOrganizationArtifact = dbInteractor.getOrganization(
+    localOrganizationArtifact.name
+  );
 }
 
 function writeOrganizationData() {
-  dbInteractor.writeOrganizationInfo(activeOrganization);
+  dbInteractor.writeOrganizationInfo(localOrganizationArtifact);
 }
 
 function writeAndReadOrganizationData() {
-  writeAndReadOrganizationData();
+  writeOrganizationData();
   readOrganizationData();
 }
 
@@ -401,21 +410,23 @@ function teamsView() {
 
   function viewTeams() {
     const teamNames = [];
-    activeOrganization.teams.forEach((element) => {
+    localOrganizationArtifact.teams.forEach((element) => {
       teamNames.push(element.name);
     });
     let userChoice = userInput.keyInSelect(teamNames, "Select team to view: ");
-    activeOrganization.teams.forEach((e) => {
-      e.members.forEach((e) => {
-        console.log(e.toString());
-      });
+    localOrganizationArtifact.teams.forEach((e) => {
+      if (e.name === teamNames[userChoice]) {
+        e.members.forEach((e) => {
+          console.log(e.toString());
+        });
+      }
     });
   }
 
   function createTeam() {
     const newTeamName = userInput.question("Name of new team: ");
-    const newTeamDescripiton = userInput.question("Name of new team: ");
-    activeOrganization.createTeam(newTeamName, newTeamDescripiton);
+    const newTeamDescripiton = userInput.question("Description of new team: ");
+    localOrganizationArtifact.createTeam(newTeamName, newTeamDescripiton);
 
     writeAndReadOrganizationData();
   }
