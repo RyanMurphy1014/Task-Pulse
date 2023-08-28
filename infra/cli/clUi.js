@@ -56,6 +56,7 @@ let activeProject;
 const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
 const { user } = require("../../entities/user");
+const { team } = require("../../entities/team");
 
 const preLoginOptions = ["Login", "Register"];
 const postLoginOptions = ["Users", "Tasks", "Teams", "Projects"];
@@ -296,6 +297,7 @@ function usersView() {
         dbInteractor.deleteUser(enteredId);
       }
     }
+    writeAndReadOrganizationData();
   }
   function isANumber(input) {
     if (input.charAt(0) <= "9" && input.charAt(0) >= "0") {
@@ -374,6 +376,7 @@ function projectsView() {
     }
     writeOrganizationData();
   }
+  writeAndReadOrganizationData();
 }
 
 function readOrganizationData() {
@@ -409,10 +412,7 @@ function teamsView() {
   }
 
   function viewTeams() {
-    const teamNames = [];
-    localOrganizationArtifact.teams.forEach((element) => {
-      teamNames.push(element.name);
-    });
+    let teamNames = localOrganizationArtifact.getTeamNames();
     let userChoice = userInput.keyInSelect(teamNames, "Select team to view: ");
     localOrganizationArtifact.teams.forEach((e) => {
       if (e.name === teamNames[userChoice]) {
@@ -431,5 +431,47 @@ function teamsView() {
     writeAndReadOrganizationData();
   }
 
-  function editTeam() {}
+  function editTeam() {
+    let teamChoice = userInput.keyInSelect(
+      localOrganizationArtifact.getTeamNames(),
+      "Select team to edit: "
+    );
+
+    const selectOptions = ["Name", "Description", "Add User", "Remove User"];
+    let userChoice = userInput.keyInSelect(selectOptions, "What to edit: ");
+    if (userChoice === 0) {
+      localOrganizationArtifact.teams[teamChoice].name =
+        userInput.question("New name:");
+    }
+    if (userChoice === 1) {
+      localOrganizationArtifact.teams[teamChoice].description =
+        userInput.question("New description:");
+    }
+    if (userChoice === 2) {
+      const userIdToAdd = userInput.question("Id of user to add:");
+      if (localOrganizationArtifact.isUserIdValid(userIdToAdd)) {
+        localOrganizationArtifact.teams[teamChoice].members.push(
+          localOrganizationArtifact.getUser(userIdToAdd)
+        );
+      } else {
+        console.log("That was not a valid user ID.");
+      }
+    }
+    if (userChoice === 3) {
+      let userChoice = userInput.keyInSelect(
+        localOrganizationArtifact.getTeamNames(),
+        "What team to remove from:"
+      );
+      const userList = localOrganizationArtifact.teams[userChoice].members;
+      let indexToRemove = userInput.keyInSelect(
+        userList,
+        "What user to remove: "
+      );
+      localOrganizationArtifact.teams[userChoice].members.splice(
+        indexToRemove,
+        1
+      );
+    }
+    writeAndReadOrganizationData();
+  }
 }

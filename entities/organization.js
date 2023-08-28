@@ -19,6 +19,18 @@ class organization {
     }
   }
 
+  isUserIdValid(id) {
+    let output = false;
+    this.teams.forEach((e) => {
+      e.members.forEach((e) => {
+        if (e.id === id) {
+          output = true;
+        }
+      });
+    });
+    return output;
+  }
+
   getUserByName(name) {
     for (let i = 0; i < this.teams.length; i++) {
       for (let j = 0; j < this.teams[i].members.length; j++) {
@@ -49,6 +61,14 @@ class organization {
     } else {
       this.teams[index].members.push(user);
     }
+  }
+
+  getTeamNames() {
+    const teamNames = [];
+    this.teams.forEach((element) => {
+      teamNames.push(element.name);
+    });
+    return teamNames;
   }
 }
 
