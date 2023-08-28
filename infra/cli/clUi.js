@@ -475,3 +475,46 @@ function teamsView() {
     writeAndReadOrganizationData();
   }
 }
+
+function taskView() {
+  viewState = "tasks";
+  const taskViewOptions = ["View Users Tasks", "Create Task"];
+  let userChoice = userInput.keyInSelect(taskViewOptions, "Select:");
+  if (userChoice === 0) {
+    viewTask();
+  }
+  if (userChoice === 1) {
+    createTask();
+  }
+
+  function viewTask() {
+    userLookup();
+    function userLookup() {
+      let lookupParameter = userInput.question(
+        "Enter name or ID of a User to lookup:"
+      );
+
+      if (isANumber(lookupParameter)) {
+        let userToDisplay = dbInteractor.getUserData(
+          localOrganizationArtifact.name,
+          lookupParameter
+        );
+        if (userToDisplay != null) {
+          console.log(userToDisplay.displayTasks());
+        } else {
+          console.log(`No results for ID:${lookupParameter}`);
+        }
+      } else {
+        console.log(
+          localOrganizationArtifact
+            .getUserByName(lookupParameter)
+            .displayTasks()
+        );
+      }
+    }
+  }
+
+  function createTask() {}
+
+  writeAndReadOrganizationData();
+}

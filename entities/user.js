@@ -14,6 +14,14 @@ class user {
     this.role = role;
   }
 
+  displayTasks() {
+    let output = "";
+    this.tasks.forEach((e) => {
+      output += e + "\n";
+    });
+    return output;
+  }
+
   toString() {
     let output = "id: " + this.id + "\n";
     output += "name: " + this.name + "\n";
