@@ -1,4 +1,5 @@
 const userInput = require("readline-sync");
+const { task } = require("../../entities/task");
 // prettier-ignore
 function displayTitle(){
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -219,9 +220,9 @@ function usersView() {
 
   function editUser() {
     const enteredId = userInput.question("Enter ID of User you want to edit: ");
-    if (dbInteractor.isValidId(enteredId) === false) {
+    if (localOrganizationArtifact.isUserIdValid(enteredId) === false) {
       console.log("No users were found with that ID");
-      viewState = "Pre Login";
+      viewState = "Post Login";
       return;
     }
     const userFields = [
@@ -298,12 +299,6 @@ function usersView() {
       }
     }
     writeAndReadOrganizationData();
-  }
-  function isANumber(input) {
-    if (input.charAt(0) <= "9" && input.charAt(0) >= "0") {
-      return true;
-    }
-    return false;
   }
 }
 
@@ -408,7 +403,7 @@ function teamsView() {
     editTeam();
   }
   if (userChoice === -1) {
-    viewState = postLogin();
+    viewState = "Post Login";
   }
 
   function viewTeams() {
@@ -476,8 +471,8 @@ function teamsView() {
   }
 }
 
-function taskView() {
-  viewState = "tasks";
+function tasksView() {
+  viewState = "Tasks";
   const taskViewOptions = ["View Users Tasks", "Create Task"];
   let userChoice = userInput.keyInSelect(taskViewOptions, "Select:");
   if (userChoice === 0) {
@@ -486,35 +481,62 @@ function taskView() {
   if (userChoice === 1) {
     createTask();
   }
+  if (userChoice === -1) {
+    viewState = "Post Login";
+  }
 
   function viewTask() {
     userLookup();
     function userLookup() {
-      let lookupParameter = userInput.question(
+      let lookupSearchTerm = userInput.question(
         "Enter name or ID of a User to lookup:"
       );
 
-      if (isANumber(lookupParameter)) {
+      if (isANumber(lookupSearchTerm)) {
         let userToDisplay = dbInteractor.getUserData(
           localOrganizationArtifact.name,
-          lookupParameter
+          lookupSearchTerm
         );
         if (userToDisplay != null) {
           console.log(userToDisplay.displayTasks());
         } else {
-          console.log(`No results for ID:${lookupParameter}`);
+          console.log(`No results for ID:${lookupSearchTerm}`);
         }
       } else {
         console.log(
           localOrganizationArtifact
-            .getUserByName(lookupParameter)
+            .getUserByName(lookupSearchTerm)
             .displayTasks()
         );
       }
     }
   }
 
-  function createTask() {}
+  function createTask() {
+    let teamChoice = userInput.keyInSelect(
+      localOrganizationArtifact.getTeamNames(),
+      "What team to assign task to: "
+    );
+    let userChoice = userInput.keyInSelect(
+      localOrganizationArtifact.teams[teamChoice].members,
+      "What user to assign task to:"
+    );
+
+    const title = userInput.question("Title:");
+    const description = userInput.question("Description:");
+    const deadline = userInput.question("Deadiline - mm/dd/yy:");
+
+    const taskToAdd = new task(title, description, deadline);
+    localOrganizationArtifact.teams[teamChoice].members[userChoice].tasks.push(
+      taskToAdd
+    );
+  }
 
   writeAndReadOrganizationData();
+}
+function isANumber(input) {
+  if (input.charAt(0) <= "9" && input.charAt(0) >= "0") {
+    return true;
+  }
+  return false;
 }

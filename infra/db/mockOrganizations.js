@@ -7,12 +7,19 @@ let organizations = [];
 //Backcountry
 let backcountry = new organization("org");
 
-let defaultProject = new project("Default Project", "Base project to mock test");
+let defaultProject = new project(
+  "Default Project",
+  "Base project to mock test"
+);
 backcountry.projects.push(defaultProject);
 
 let defaultTeam = new team("Default Team", "Landing position");
-defaultTeam.members.push(new user("101", "Ryan Murphy", "ryan.murphy611@gmail.com", "Admin"));
-defaultTeam.members.push(new user("202", "Kali Murphy", "kali.murphy611@gmail.com", "Admin"));
+defaultTeam.members.push(
+  new user("101", "Ryan Murphy", "ryan.murphy611@gmail.com", "Admin")
+);
+defaultTeam.members.push(
+  new user("202", "Kali Murphy", "kali.murphy611@gmail.com", "Admin")
+);
 
 backcountry.teams.push(defaultTeam);
 organizations.push(backcountry);

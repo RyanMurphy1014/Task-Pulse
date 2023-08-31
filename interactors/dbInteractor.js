@@ -73,7 +73,7 @@ function setUserValue(valueBeingChanged, newValue, editedUserId) {
 }
 
 function isValidId(id) {
-  return databaseImplementationUsers.isValidId(id);
+  return databaseImplementationOrganizations.isValidId(id);
 }
 
 function deleteUser(id) {
