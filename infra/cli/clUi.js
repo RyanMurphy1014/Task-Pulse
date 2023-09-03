@@ -429,24 +429,21 @@ function tasksView() {
   function viewTask() {
     userLookup();
     function userLookup() {
-      let lookupSearchTerm = userInput.question(
+      let searchParameter = userInput.question(
         "Enter name or ID of a User to lookup:"
       );
 
-      if (isANumber(lookupSearchTerm)) {
-        let userToDisplay = dbInteractor.getUserData(
-          localOrganizationArtifact.name,
-          lookupSearchTerm
-        );
+      if (isANumber(searchParameter)) {
+        let userToDisplay = localOrganizationArtifact.getUser(searchParameter);
         if (userToDisplay != null) {
           console.log(userToDisplay.displayTasks());
         } else {
-          console.log(`No results for ID:${lookupSearchTerm}`);
+          console.log(`No results for ID:${searchParameter}`);
         }
       } else {
         console.log(
           localOrganizationArtifact
-            .getUserByName(lookupSearchTerm)
+            .getUserByName(searchParameter)
             .displayTasks()
         );
       }
