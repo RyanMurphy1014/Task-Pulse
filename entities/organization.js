@@ -10,13 +10,15 @@ class organization {
   }
 
   getUser(id) {
+    let output = null;
     for (let i = 0; i < this.teams.length; i++) {
       for (let j = 0; j < this.teams[i].members.length; j++) {
         if (this.teams[i].members[j].id === id) {
-          return this.teams[i].members[j];
+          output = this.teams[i].members[j];
         }
       }
     }
+    return output;
   }
 
   isUserIdValid(id) {
@@ -69,6 +71,27 @@ class organization {
       teamNames.push(element.name);
     });
     return teamNames;
+  }
+
+  deleteUser(id) {
+    let isCompletelyRemoved = false;
+    while (isCompletelyRemoved === false) {
+      console.log("Got this far");
+      let wasAUserDeleted = false;
+      for (var i = 0; i < this.teams.length; i++) {
+        for (let j = 0; j < this.teams[i].members.length; j++) {
+          if (this.teams[i].members[j].id === id) {
+            wasAUserDeleted = true;
+            this.teams[i].members.splice(j, 1);
+          }
+        }
+      }
+
+      if (wasAUserDeleted === false && i === this.teams.length) {
+        //Runs a whole check before checking if a user was deleted
+        isCompletelyRemoved = true;
+      }
+    }
   }
 }
 

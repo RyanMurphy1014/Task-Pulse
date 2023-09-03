@@ -202,10 +202,7 @@ function usersView() {
     );
 
     if (isANumber(lookupParameter)) {
-      let userToDisplay = dbInteractor.getUserData(
-        localOrganizationArtifact.name,
-        lookupParameter
-      );
+      let userToDisplay = localOrganizationArtifact.getUser(lookupParameter);
       if (userToDisplay != null) {
         console.log(userToDisplay.toString());
       } else {
@@ -225,77 +222,21 @@ function usersView() {
       viewState = "Post Login";
       return;
     }
-    const userFields = [
-      "Name",
-      "Email",
-      "Role",
-      "Organizations",
-      "Projects",
-      "Teams",
-      "Tasks",
-      "Comments",
-      "*Delete",
-    ];
+    let referenceToEnteredUser = localOrganizationArtifact.getUser(enteredId);
+    const userFields = ["Name", "Email", "Role", "*Delete"];
     index = userInput.keyInSelect(userFields, "Select:");
     if (index === 0) {
-      dbInteractor.setUserValue(
-        "name",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
+      referenceToEnteredUser.name = userInput.question("New Name:");
     }
     if (index === 1) {
-      dbInteractor.setUserValue(
-        "email",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
+      referenceToEnteredUser.email = userInput.question("New Email");
     }
     if (index === 2) {
-      dbInteractor.setUserValue(
-        "role",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
+      referenceToEnteredUser.role = userInput.question("New Role");
     }
     if (index === 3) {
-      dbInteractor.setUserValue(
-        "organizations",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
-    }
-    if (index === 4) {
-      dbInteractor.setUserValue(
-        "projects",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
-    }
-    if (index === 5) {
-      dbInteractor.setUserValue(
-        "teams",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
-    }
-    if (index === 6) {
-      dbInteractor.setUserValue(
-        "tasks",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
-    }
-    if (index === 7) {
-      dbInteractor.setUserValue(
-        "comments",
-        userInput.question("Enter new value:"),
-        enteredId
-      );
-    }
-    if (index === 8) {
-      if (userInput.keyInYN("Are you sure you want to delete this user?:")) {
-        dbInteractor.deleteUser(enteredId);
+      if (userInput.keyInYN("Are you sure you want to delete this user?")) {
+        localOrganizationArtifact.deleteUser(referenceToEnteredUser.id);
       }
     }
     writeAndReadOrganizationData();

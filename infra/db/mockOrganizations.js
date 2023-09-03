@@ -33,6 +33,7 @@ function findUserById(organizationName, id) {
 }
 
 function getIdexInOrgList(organizationName) {
+  
   const index = organizations.findIndex((element) => {
     if (element.name === organizationName) {
       return true;
