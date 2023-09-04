@@ -52,7 +52,6 @@ displayTitle();
 
 let activeUser;
 let localOrganizationArtifact;
-let activeProject;
 
 const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
@@ -60,7 +59,7 @@ const { user } = require("../../entities/user");
 const { team } = require("../../entities/team");
 
 const preLoginOptions = ["Login", "Register"];
-const postLoginOptions = ["Users", "Tasks", "Teams", "Projects"];
+const postLoginOptions = ["Users", "Tasks", "Teams"];
 
 //State Flags
 let isRunning = true;
@@ -90,10 +89,6 @@ while (isRunning) {
 
     case "Teams":
       teamsView();
-      break;
-
-    case "Projects":
-      projectsView();
       break;
 
     default:
@@ -160,7 +155,6 @@ function logout() {
 function postLogin() {
   console.log(`Logged in User: ${activeUser.name}`);
   console.log(`Current Organization: ${localOrganizationArtifact.name}`);
-  console.log(`Current Project: ${activeProject.name}`);
   index = userInput.keyInSelect(postLoginOptions, "Select:");
 
   if (index === 0) {
@@ -171,9 +165,6 @@ function postLogin() {
   }
   if (index === 2) {
     viewState = "Teams";
-  }
-  if (index === 3) {
-    viewState = "Projects";
   }
   if (index === -1) {
     logout();
@@ -248,71 +239,6 @@ function isAdmin(user) {
     return true;
   }
   return false;
-}
-
-function projectsView() {
-  const projectsViewOptions = [
-    "Change Project",
-    "Create Project",
-    "Edit Project",
-  ];
-  let index = userInput.keyInSelect(projectsViewOptions, "Select:");
-
-  console.log(`Active Project: ${activeProject.name}`);
-  if (index === 0) {
-    changeProject();
-  }
-  if (index === 1) {
-    createProject();
-  }
-  if (index === 2) {
-    editProject();
-  }
-
-  viewState = "Post Login";
-
-  function changeProject() {
-    let indexOfNewActiveProject = userInput.keyInSelect(
-      localOrganizationArtifact.projects
-    );
-    if (indexOfNewActiveProject != -1) {
-      activeProject =
-        localOrganizationArtifact.projects[indexOfNewActiveProject];
-    }
-  }
-
-  function createProject() {
-    if (activeUser.role === "Admin") {
-      localOrganizationArtifact.projects.push(
-        new project(
-          userInput.question("Name for new project:"),
-          userInput.question("Description: ")
-        )
-      );
-      activeProject =
-        localOrganizationArtifact.projects[
-          localOrganizationArtifact.projects.length - 1
-        ];
-      writeOrganizationData();
-    } else {
-      console.log("You do not have the required privledges");
-    }
-  }
-
-  function editProject() {
-    let choiceIndex = userInput.keyInSelect(
-      ["Name", "Description"],
-      "What would you like to change in active project:"
-    );
-    if (choiceIndex === 0) {
-      activeProject.name = userInput.question("New name: ");
-    }
-    if (choiceIndex === 1) {
-      activeProject.description = userInput.question("New Description: ");
-    }
-    writeOrganizationData();
-  }
-  writeAndReadOrganizationData();
 }
 
 function readOrganizationData() {
