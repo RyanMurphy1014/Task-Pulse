@@ -1,5 +1,4 @@
 const { organization } = require("../../entities/organization");
-const { project } = require("../../entities/project");
 const { team } = require("../../entities/team");
 const { user } = require("../../entities/user");
 
@@ -7,11 +6,6 @@ let organizations = [];
 //Backcountry
 let backcountry = new organization("org");
 
-let defaultProject = new project(
-  "Default Project",
-  "Base project to mock test"
-);
-backcountry.projects.push(defaultProject);
 
 let defaultTeam = new team("Default Team", "Landing position");
 defaultTeam.members.push(
@@ -33,7 +27,6 @@ function findUserById(organizationName, id) {
 }
 
 function getIdexInOrgList(organizationName) {
-  
   const index = organizations.findIndex((element) => {
     if (element.name === organizationName) {
       return true;
