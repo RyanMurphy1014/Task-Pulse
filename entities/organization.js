@@ -76,7 +76,6 @@ class organization {
   deleteUser(id) {
     let isCompletelyRemoved = false;
     while (isCompletelyRemoved === false) {
-      console.log("Got this far");
       let wasAUserDeleted = false;
       for (var i = 0; i < this.teams.length; i++) {
         for (let j = 0; j < this.teams[i].members.length; j++) {
