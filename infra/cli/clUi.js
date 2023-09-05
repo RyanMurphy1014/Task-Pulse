@@ -340,19 +340,22 @@ function teamsView() {
 
 function tasksView() {
   viewState = "Tasks";
-  const taskViewOptions = ["View Users Tasks", "Create Task"];
+  const taskViewOptions = ["View My Tasks", "View Users Tasks", "Create Task"];
   let userChoice = userInput.keyInSelect(taskViewOptions, "Select:");
   if (userChoice === 0) {
-    viewTask();
+    viewMyTasks();
   }
   if (userChoice === 1) {
+    viewUsersTasks();
+  }
+  if (userChoice === 2) {
     createTask();
   }
   if (userChoice === -1) {
     viewState = "Post Login";
   }
 
-  function viewTask() {
+  function viewUsersTasks() {
     userLookup();
     function userLookup() {
       let searchParameter = userInput.question(
@@ -374,6 +377,23 @@ function tasksView() {
         );
       }
     }
+  }
+
+  function viewMyTasks() {
+    if (activeUser.tasks.length > 0) {
+      let userChoiceIndex = userInput.keyInSelect(
+        activeUser.tasks,
+        "Select task to update status"
+      );
+      updateTaskStatus(activeUser.tasks[userChoiceIndex]);
+    } else {
+      console.log("This user has no tasks to view.");
+    }
+  }
+
+  function updateTaskStatus(selectedTask) {
+    let options = ["Started", "Not Started", "Blocked", "Completed"];
+    selectedTask.setStatus(userInput.keyInSelect(options, "Status of task:"));
   }
 
   function createTask() {
@@ -398,6 +418,7 @@ function tasksView() {
 
   writeAndReadOrganizationData();
 }
+
 function isANumber(input) {
   if (input.charAt(0) <= "9" && input.charAt(0) >= "0") {
     return true;

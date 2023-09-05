@@ -6,24 +6,24 @@ class task {
   commentThread;
 
   setStatus(statusCode) {
+    if (statusCode === 0) {
+      this.status = "Started";
+    }
     if (statusCode === 1) {
-      return "Started";
+      this.status = "Not Started";
     }
     if (statusCode === 2) {
-      return "Not Started";
+      this.status = "Blocked";
     }
     if (statusCode === 3) {
-      return "Blocked";
-    }
-    if (statusCode === 4) {
-      return "Completed";
+      this.status = "Completed";
     }
   }
 
   constructor(title, description, deadline) {
     this.title = title;
     this.description = description;
-    this.status = this.setStatus(2);
+    this.setStatus(1);
     this.deadline = deadline;
   }
 
