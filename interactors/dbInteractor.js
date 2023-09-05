@@ -22,6 +22,11 @@ function isValidId(id) {
   return databaseImplementationOrganizations.isValidId(id);
 }
 
+/**
+ *
+ * @param {String} organizationName Name property of an organization to lookup
+ * @returns Organization object from database
+ */
 function getOrganization(organizationName) {
   return databaseImplementationOrganizations.getOrganization(organizationName);
 }

@@ -57,6 +57,7 @@ const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
 const { user } = require("../../entities/user");
 const { team } = require("../../entities/team");
+require("dotenv").config();
 
 const preLoginOptions = ["Login", "Register"];
 const postLoginOptions = ["Users", "Tasks", "Teams"];
@@ -64,6 +65,13 @@ const postLoginOptions = ["Users", "Tasks", "Teams"];
 //State Flags
 let isRunning = true;
 let viewState = "Pre Login";
+if (process.env.TEST_MODE === "true") {
+  //TEST_MODE entry point
+  localOrganizationArtifact = dbInteractor.getOrganization("org");
+  activeUser = localOrganizationArtifact.getUser("101");
+  viewState = "Post Login";
+}
+//TODO figure out why my environment variable wont work.
 while (isRunning) {
   console.log(
     "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -393,7 +401,9 @@ function tasksView() {
 
   function updateTaskStatus(selectedTask) {
     let options = ["Started", "Not Started", "Blocked", "Completed"];
-    selectedTask.setStatus(userInput.keyInSelect(options, "Status of task:"));
+    if (options != -1) {
+      selectedTask.setStatus(userInput.keyInSelect(options, "Status of task:"));
+    }
   }
 
   function createTask() {

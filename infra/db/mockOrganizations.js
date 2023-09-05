@@ -41,4 +41,4 @@ function writeOrganizationInfo(organizationObject) {
   organizations[getIdexInOrgList(organizationObject.name)] = organizationObject;
 }
 
-module.exports = { getOrganization, findUserById, writeOrganizationInfo };
+module.exports = { getOrganization, writeOrganizationInfo };
