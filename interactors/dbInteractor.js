@@ -6,20 +6,20 @@ const databaseImplementationOrganizations = require("../infra/db/mockOrganizatio
 
 //Credentials
 function login(organizationName, username, password) {
-  const attemptedLogin = databaseImplementationCredentials.login(
-    organizationName,
-    username,
-    password
-  );
-  if (attemptedLogin != null) {
-    return attemptedLogin;
-  } else {
-    return null;
-  }
+	const attemptedLogin = databaseImplementationCredentials.login(
+		organizationName,
+		username,
+		password
+	);
+	if (attemptedLogin != null) {
+		return attemptedLogin;
+	} else {
+		return null;
+	}
 }
 
 function isValidId(id) {
-  return databaseImplementationOrganizations.isValidId(id);
+	return databaseImplementationOrganizations.isValidId(id);
 }
 
 /**
@@ -28,15 +28,15 @@ function isValidId(id) {
  * @returns Organization object from database
  */
 function getOrganization(organizationName) {
-  return databaseImplementationOrganizations.getOrganization(organizationName);
+	return databaseImplementationOrganizations.getOrganization(organizationName);
 }
 
 function writeOrganizationInfo(organizationObject) {
-  databaseImplementationOrganizations.writeOrganizationInfo(organizationObject);
+	databaseImplementationOrganizations.writeOrganizationInfo(organizationObject);
 }
 module.exports = {
-  login,
-  isValidId,
-  getOrganization,
-  writeOrganizationInfo,
+	login,
+	isValidId,
+	getOrganization,
+	writeOrganizationInfo,
 };
