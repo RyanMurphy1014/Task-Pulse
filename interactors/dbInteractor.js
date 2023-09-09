@@ -1,7 +1,8 @@
 //Implementation imports
 
+const sequelizeTest = require("../infra/db/organizationModel");
+sequelizeTest.testConnection();
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
-const { user } = require("../entities/user");
 const databaseImplementationOrganizations = require("../infra/db/mockOrganizations");
 
 //Credentials
