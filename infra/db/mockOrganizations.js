@@ -21,10 +21,6 @@ function getOrganization(organizationName) {
 	return organizations[getIdexInOrgList(organizationName)];
 }
 
-function findUserById(organizationName, id) {
-	return organizations[getIdexInOrgList(organizationName)].getUser(id);
-}
-
 function getIdexInOrgList(organizationName) {
 	const index = organizations.findIndex((element) => {
 		if (element.name === organizationName) {
@@ -40,7 +36,9 @@ function writeOrganizationInfo(organizationObject) {
 	organizations[getIdexInOrgList(organizationObject.name)] = organizationObject;
 }
 
-const seqlizeOnboarder = require("../db/organizationModel");
-seqlizeOnboarder.tempOnloading(backcountry);
+function onloadData() {
+	const seqlizeOnboarder = require("../db/organizationModel");
+	seqlizeOnboarder.tempOnloading(backcountry);
+}
 
-module.exports = { getOrganization, writeOrganizationInfo };
+module.exports = { getOrganization, writeOrganizationInfo, onloadData };

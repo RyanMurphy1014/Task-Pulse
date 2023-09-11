@@ -10,7 +10,6 @@ const Organization = sequelize.define(
 	{
 		organizationName: {
 			type: DataTypes.STRING,
-			unique: true,
 		},
 		objectData: {
 			type: DataTypes.JSON,
@@ -31,11 +30,31 @@ async function testConnection() {
 	}
 }
 
-function tempOnloading(orgObject) {
-	Organization.create({
+async function tempOnloading(orgObject) {
+	const item = await Organization.create({
 		organizationName: orgObject.name,
 		objectData: orgObject,
 	});
+	console.log(
+		"---------------------------------------------------------Added to db",
+		item.name
+	);
 }
 
-module.exports = { testConnection, tempOnloading };
+async function getOrganization(orgName) {
+	const output = await Organization.findOne({
+		where: { organizationName: orgName },
+	});
+
+	console.log(output.dataValues.objectData);
+	return output.dataValues.objectData;
+}
+
+async function writeOrganizationInfo(orgObject) {}
+
+module.exports = {
+	testConnection,
+	tempOnloading,
+	getOrganization,
+	writeOrganizationInfo,
+};

@@ -6,9 +6,10 @@ if (process.env.OUTPUT === "cli") {
 	);
 
 	const sequelizeTest = require("./infra/db/organizationModel");
+	//sequelizeTest.testConnection();
 
-	sequelizeTest.testConnection();
-	setTimeout(() => {
-		const cliUI = require("./infra/cli/clUi.js");
-	}, 1000);
+	//const onloader = require("./infra/db/mockOrganizations");
+	//onloader.onloadData();
+
+	const cliUI = require("./infra/cli/clUi.js");
 }

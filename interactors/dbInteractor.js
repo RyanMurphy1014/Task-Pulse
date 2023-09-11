@@ -1,9 +1,7 @@
 //Implementation imports
 
-const sequelizeTest = require("../infra/db/organizationModel");
-sequelizeTest.testConnection();
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
-const databaseImplementationOrganizations = require("../infra/db/mockOrganizations");
+const databaseImplementationOrganizations = require("../infra/db/organizationModel");
 
 //Credentials
 function login(organizationName, username, password) {
@@ -19,17 +17,10 @@ function login(organizationName, username, password) {
 	}
 }
 
-function isValidId(id) {
-	return databaseImplementationOrganizations.isValidId(id);
-}
-
-/**
- *
- * @param {String} organizationName Name property of an organization to lookup
- * @returns Organization object from database
- */
-function getOrganization(organizationName) {
-	return databaseImplementationOrganizations.getOrganization(organizationName);
+async function getOrganization(organizationName) {
+	return await databaseImplementationOrganizations.getOrganization(
+		organizationName
+	);
 }
 
 function writeOrganizationInfo(organizationObject) {
@@ -37,7 +28,6 @@ function writeOrganizationInfo(organizationObject) {
 }
 module.exports = {
 	login,
-	isValidId,
 	getOrganization,
 	writeOrganizationInfo,
 };
