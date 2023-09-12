@@ -1,5 +1,11 @@
 const userInput = require("readline-sync");
+const loginInteractor = require("../../interactors/loginInteractor");
+const dbInteractor = require("../../interactors/dbInteractor");
+const { user } = require("../../entities/user");
+const { organization } = require("../../entities/organization");
 const { task } = require("../../entities/task");
+require("dotenv").config();
+
 // prettier-ignore
 function displayTitle(){
     console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -53,14 +59,6 @@ displayTitle();
 let activeUser;
 let localOrganizationArtifact;
 
-const loginInteractor = require("../../interactors/loginInteractor");
-const dbInteractor = require("../../interactors/dbInteractor");
-
-const { user } = require("../../entities/user");
-const { team } = require("../../entities/team");
-const { response } = require("express");
-require("dotenv").config();
-
 const preLoginOptions = ["Login", "Register"];
 const postLoginOptions = ["Users", "Tasks", "Teams"];
 
@@ -70,12 +68,13 @@ async function main() {
 	let viewState = "Pre Login";
 	if (process.env.TEST_MODE === "true") {
 		//TEST_MODE entry point
-		localOrganizationArtifact = await dbInteractor.getOrganization("org");
+		localOrganizationArtifact = new organization(
+			await dbInteractor.getOrganization("org")
+		);
 
 		activeUser = localOrganizationArtifact.getUser("101");
 		viewState = "Post Login";
 	}
-	//TODO figure out why my environment variable wont work.
 	while (isRunning) {
 		console.log(
 			"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -205,7 +204,9 @@ async function main() {
 			);
 
 			if (isANumber(lookupParameter)) {
-				let userToDisplay = localOrganizationArtifact.getUser(lookupParameter);
+				let userToDisplay = new user(
+					localOrganizationArtifact.getUser(lookupParameter)
+				);
 				if (userToDisplay != null) {
 					console.log(userToDisplay.toString());
 				} else {
@@ -296,7 +297,8 @@ async function main() {
 			localOrganizationArtifact.teams.forEach((e) => {
 				if (e.name === teamNames[userChoice]) {
 					e.members.forEach((e) => {
-						console.log(e.toString());
+						let outputUser = new user(e);
+						console.log(outputUser.toString());
 					});
 				}
 			});

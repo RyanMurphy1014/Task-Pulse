@@ -22,23 +22,18 @@ const Organization = sequelize.define(
 
 async function testConnection() {
 	try {
-		await sequelize.authenticate();
-		console.log("Good connection");
-		await sequelize.sync();
+		await sequelize.sync({ force: true });
 	} catch (error) {
 		console.log(error);
 	}
 }
 
 async function tempOnloading(orgObject) {
+	console.log(`=----=-=-=--=--= ${JSON.stringify(orgObject)}`);
 	const item = await Organization.create({
 		organizationName: orgObject.name,
 		objectData: orgObject,
 	});
-	console.log(
-		"---------------------------------------------------------Added to db",
-		item.name
-	);
 }
 
 async function getOrganization(orgName) {
