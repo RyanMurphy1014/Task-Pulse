@@ -54,10 +54,11 @@ function displayTitle(){
  console.log("                                  ~~                       \\/____/          \\/____/                  \\/____/         ");
  console.log("                                                                                                                     ");
 }
-displayTitle();
+//displayTitle();
 
 let activeUser;
-let localOrganizationArtifact;
+
+let organizationArtifact;
 
 const preLoginOptions = ["Login", "Register"];
 const postLoginOptions = ["Users", "Tasks", "Teams"];
@@ -68,13 +69,14 @@ async function main() {
 	let viewState = "Pre Login";
 	if (process.env.TEST_MODE === "true") {
 		//TEST_MODE entry point
-		localOrganizationArtifact = new organization(
+		organizationArtifact = new organization(
 			await dbInteractor.getOrganization("org")
 		);
 
-		activeUser = localOrganizationArtifact.getUser("101");
+		activeUser = organizationArtifact.getUser("101");
 		viewState = "Post Login";
 	}
+
 	while (isRunning) {
 		console.log(
 			"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
@@ -120,11 +122,11 @@ async function main() {
 			userInput.question("Password: ")
 		);
 		if (loginAttempt != null) {
-			localOrganizationArtifact = dbInteractor.getOrganization(
+			organizationArtifact = dbInteractor.getOrganization(
 				organizationToLoginTo
 			);
-			activeUser = localOrganizationArtifact.getUser(loginAttempt.idOfUser);
-			activeProject = localOrganizationArtifact.projects[0];
+			activeUser = organizationArtifact.getUser(loginAttempt.idOfUser);
+			activeProject = organizationArtifact.projects[0];
 			console.log("Successful Login");
 			viewState = "Post Login";
 		} else {
@@ -146,6 +148,7 @@ async function main() {
 		//Leave
 		if (index === -1) {
 			console.log("Goodbye!");
+
 			isRunning = false;
 		}
 	}
@@ -160,12 +163,12 @@ async function main() {
 	function logout() {
 		viewState = "Pre Login";
 		activeUser = null;
-		localOrganizationArtifact = null;
+		organizationArtifact = null;
 	}
 
 	function postLogin() {
 		console.log(`Logged in User: ${activeUser.name}`);
-		console.log(`Current Organization: ${localOrganizationArtifact.name}`);
+		console.log(`Current Organization: ${organizationArtifact.name}`);
 		index = userInput.keyInSelect(postLoginOptions, "Select:");
 
 		if (index === 0) {
@@ -182,7 +185,7 @@ async function main() {
 		}
 	}
 
-	function usersView() {
+	async function usersView() {
 		const userViewOptions = ["Lookup", "Edit"];
 
 		let index = userInput.keyInSelect(userViewOptions, "Select:");
@@ -203,9 +206,11 @@ async function main() {
 				"Enter name or ID of a User to lookup:"
 			);
 
-			if (isANumber(lookupParameter)) {
+			if (!organizationArtifact.isUserIdValid(lookupParameter)) {
+				console.log("That user doesn't exist");
+			} else if (isANumber(lookupParameter)) {
 				let userToDisplay = new user(
-					localOrganizationArtifact.getUser(lookupParameter)
+					organizationArtifact.getUser(lookupParameter)
 				);
 				if (userToDisplay != null) {
 					console.log(userToDisplay.toString());
@@ -214,21 +219,21 @@ async function main() {
 				}
 			} else {
 				console.log(
-					localOrganizationArtifact.getUserByName(lookupParameter).toString()
+					organizationArtifact.getUserByName(lookupParameter).toString()
 				);
 			}
 		}
 
-		function editUser() {
+		async function editUser() {
 			const enteredId = userInput.question(
 				"Enter ID of User you want to edit: "
 			);
-			if (localOrganizationArtifact.isUserIdValid(enteredId) === false) {
+			if (organizationArtifact.isUserIdValid(enteredId) === false) {
 				console.log("No users were found with that ID");
 				viewState = "Post Login";
 				return;
 			}
-			let referenceToEnteredUser = localOrganizationArtifact.getUser(enteredId);
+			let referenceToEnteredUser = organizationArtifact.getUser(enteredId);
 			const userFields = ["Name", "Email", "Role", "*Delete"];
 			index = userInput.keyInSelect(userFields, "Select:");
 			if (index === 0) {
@@ -242,10 +247,11 @@ async function main() {
 			}
 			if (index === 3) {
 				if (userInput.keyInYN("Are you sure you want to delete this user?")) {
-					localOrganizationArtifact.deleteUser(referenceToEnteredUser.id);
+					organizationArtifact.deleteUser(referenceToEnteredUser.id);
 				}
 			}
-			writeAndReadOrganizationData();
+			await writeOrganizationData();
+			await readOrganizationData();
 		}
 	}
 
@@ -256,19 +262,19 @@ async function main() {
 		return false;
 	}
 
-	function readOrganizationData() {
-		localOrganizationArtifact = dbInteractor.getOrganization(
-			localOrganizationArtifact.name
+	async function readOrganizationData() {
+		organizationArtifact = await dbInteractor.getOrganization(
+			organizationArtifact.name
 		);
 	}
 
-	function writeOrganizationData() {
-		dbInteractor.writeOrganizationInfo(localOrganizationArtifact);
+	async function writeOrganizationData() {
+		await dbInteractor.writeOrganizationInfo(organizationArtifact);
 	}
 
-	function writeAndReadOrganizationData() {
-		writeOrganizationData();
-		readOrganizationData();
+	async function writeAndReadOrganizationData() {
+		await writeOrganizationData();
+		await readOrganizationData();
 	}
 
 	function teamsView() {
@@ -289,12 +295,12 @@ async function main() {
 		}
 
 		function viewTeams() {
-			let teamNames = localOrganizationArtifact.getTeamNames();
+			let teamNames = organizationArtifact.getTeamNames();
 			let userChoice = userInput.keyInSelect(
 				teamNames,
 				"Select team to view: "
 			);
-			localOrganizationArtifact.teams.forEach((e) => {
+			organizationArtifact.teams.forEach((e) => {
 				if (e.name === teamNames[userChoice]) {
 					e.members.forEach((e) => {
 						let outputUser = new user(e);
@@ -309,32 +315,32 @@ async function main() {
 			const newTeamDescripiton = userInput.question(
 				"Description of new team: "
 			);
-			localOrganizationArtifact.createTeam(newTeamName, newTeamDescripiton);
+			organizationArtifact.createTeam(newTeamName, newTeamDescripiton);
 
 			writeAndReadOrganizationData();
 		}
 
 		function editTeam() {
 			let teamChoice = userInput.keyInSelect(
-				localOrganizationArtifact.getTeamNames(),
+				organizationArtifact.getTeamNames(),
 				"Select team to edit: "
 			);
 
 			const selectOptions = ["Name", "Description", "Add User", "Remove User"];
 			let userChoice = userInput.keyInSelect(selectOptions, "What to edit: ");
 			if (userChoice === 0) {
-				localOrganizationArtifact.teams[teamChoice].name =
+				organizationArtifact.teams[teamChoice].name =
 					userInput.question("New name:");
 			}
 			if (userChoice === 1) {
-				localOrganizationArtifact.teams[teamChoice].description =
+				organizationArtifact.teams[teamChoice].description =
 					userInput.question("New description:");
 			}
 			if (userChoice === 2) {
 				const userIdToAdd = userInput.question("Id of user to add:");
-				if (localOrganizationArtifact.isUserIdValid(userIdToAdd)) {
-					localOrganizationArtifact.teams[teamChoice].members.push(
-						localOrganizationArtifact.getUser(userIdToAdd)
+				if (organizationArtifact.isUserIdValid(userIdToAdd)) {
+					organizationArtifact.teams[teamChoice].members.push(
+						organizationArtifact.getUser(userIdToAdd)
 					);
 				} else {
 					console.log("That was not a valid user ID.");
@@ -342,18 +348,15 @@ async function main() {
 			}
 			if (userChoice === 3) {
 				let userChoice = userInput.keyInSelect(
-					localOrganizationArtifact.getTeamNames(),
+					organizationArtifact.getTeamNames(),
 					"What team to remove from:"
 				);
-				const userList = localOrganizationArtifact.teams[userChoice].members;
+				const userList = organizationArtifact.teams[userChoice].members;
 				let indexToRemove = userInput.keyInSelect(
 					userList,
 					"What user to remove: "
 				);
-				localOrganizationArtifact.teams[userChoice].members.splice(
-					indexToRemove,
-					1
-				);
+				organizationArtifact.teams[userChoice].members.splice(indexToRemove, 1);
 			}
 			writeAndReadOrganizationData();
 		}
@@ -388,8 +391,7 @@ async function main() {
 				);
 
 				if (isANumber(searchParameter)) {
-					let userToDisplay =
-						localOrganizationArtifact.getUser(searchParameter);
+					let userToDisplay = organizationArtifact.getUser(searchParameter);
 					if (userToDisplay != null) {
 						console.log(userToDisplay.displayTasks());
 					} else {
@@ -397,9 +399,7 @@ async function main() {
 					}
 				} else {
 					console.log(
-						localOrganizationArtifact
-							.getUserByName(searchParameter)
-							.displayTasks()
+						organizationArtifact.getUserByName(searchParameter).displayTasks()
 					);
 				}
 			}
@@ -428,11 +428,11 @@ async function main() {
 
 		function createTask() {
 			let teamChoice = userInput.keyInSelect(
-				localOrganizationArtifact.getTeamNames(),
+				organizationArtifact.getTeamNames(),
 				"What team to assign task to: "
 			);
 			let userChoice = userInput.keyInSelect(
-				localOrganizationArtifact.teams[teamChoice].members,
+				organizationArtifact.teams[teamChoice].members,
 				"What user to assign task to:"
 			);
 
@@ -441,9 +441,9 @@ async function main() {
 			const deadline = userInput.question("Deadiline - mm/dd/yy:");
 
 			const taskToAdd = new task(title, description, deadline);
-			localOrganizationArtifact.teams[teamChoice].members[
-				userChoice
-			].tasks.push(taskToAdd);
+			organizationArtifact.teams[teamChoice].members[userChoice].tasks.push(
+				taskToAdd
+			);
 		}
 
 		writeAndReadOrganizationData();

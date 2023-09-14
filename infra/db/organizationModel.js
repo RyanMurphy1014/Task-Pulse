@@ -1,5 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
+let promises = [];
+
 const sequelize = new Sequelize("taskpulse", "admin", "Asdfqwer123$", {
 	timestamp: false,
 	dialect: "mysql",
@@ -45,7 +47,15 @@ async function getOrganization(orgName) {
 	return output.dataValues.objectData;
 }
 
-async function writeOrganizationInfo(orgObject) {}
+async function writeOrganizationInfo(orgObject) {
+	const input = await Organization.findOne({
+		where: { organizationName: orgObject.name },
+	});
+	console.log(input);
+	input.objectData = orgObject;
+	await input.save();
+	console.log("Got tis far");
+}
 
 module.exports = {
 	testConnection,
