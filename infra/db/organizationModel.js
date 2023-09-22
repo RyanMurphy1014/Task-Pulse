@@ -1,6 +1,5 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-let promises = [];
 
 const sequelize = new Sequelize("taskpulse", "admin", "Asdfqwer123$", {
 	timestamp: false,
@@ -30,13 +29,6 @@ async function testConnection() {
 	}
 }
 
-async function tempOnloading(orgObject) {
-	console.log(`=----=-=-=--=--= ${JSON.stringify(orgObject)}`);
-	const item = await Organization.create({
-		organizationName: orgObject.name,
-		objectData: orgObject,
-	});
-}
 
 async function getOrganization(orgName) {
 	const output = await Organization.findOne({
