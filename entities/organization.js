@@ -9,6 +9,18 @@ class organization {
 		this.name = jsonObject.name;
 		this.teams = jsonObject.teams;
 	}
+    getName(){
+        return this.name;
+    }
+    getTeams(){
+        return this.teams;
+    }
+    setName(name){
+        this.name = name;
+    }
+    setTeams(teams){
+        this.teams = teams;
+    }
 
 	getUser(id) {
 		let output = null;

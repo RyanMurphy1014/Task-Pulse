@@ -3,7 +3,6 @@ class user {
 	name;
 	email;
 	role;
-
 	tasks = [];
 	comments = [];
 
@@ -14,6 +13,42 @@ class user {
 		this.role = jsonObject.role;
 	}
 
+    getComments (){
+        return this.comments ;
+    }
+    setComments (comments ){
+        this.comments  = comments ;
+    }
+    getTasks (){
+        return this.tasks ;
+    }
+    setTasks (tasks ){
+        this.tasks  = tasks ;
+    }
+    getRole(){
+        return this.role;
+    }
+    setRole(role){
+        this.role = role;
+    }
+    getEmail(){
+        return this.email;
+    }
+    setEmail(email){
+        this.email = email;
+    }
+    getName(){
+        return this.name;
+    }
+    setName(name){
+        this.name = name;
+    }
+    getId(){
+        return this.id;
+    }
+    setId(id){
+        this.id = id;
+    }
 	displayTasks() {
 		let output = "";
 		this.tasks.forEach((e) => {
