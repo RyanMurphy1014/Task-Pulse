@@ -3,8 +3,6 @@ class task {
   description;
   status;
   deadline;
-  commentThread;
-
   setStatus(statusCode) {
     if (statusCode === 0) {
       this.status = "Started";

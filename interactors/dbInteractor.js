@@ -1,7 +1,7 @@
 //Implementation imports
 
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
-const databaseImplementationOrganizations = require("../infra/db/organizationModel");
+const databaseImplementationOrganizations = require("../infra/db/dbConnector");
 
 //Credentials
 function login(organizationName, username, password) {
@@ -23,11 +23,27 @@ async function getOrganization(organizationName) {
 	);
 }
 
-function writeOrganizationInfo(organizationObject) {
-	databaseImplementationOrganizations.writeOrganizationInfo(organizationObject);
+async function getUser(id, organizationId){
+    return databaseImplementationOrganizations.getUser(id, organizationId);
 }
+
+async function createUser(id, userName, email, role){
+    databaseImplementationOrganizations.createUser(id, userName, email, role);
+}
+
+async function deleteUser(id, organizationId){
+    databaseImplementationOrganizations.deleteUser(id, organizationId);
+}
+
+async function assignTask(userId, task){
+    databaseImplementationOrganizations.assignTask(userId, task);
+}
+
 module.exports = {
 	login,
 	getOrganization,
-	writeOrganizationInfo,
+    getUser,
+    createUser,
+    deleteUser,
+    assignTask,
 };

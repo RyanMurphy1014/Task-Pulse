@@ -3,9 +3,7 @@ class user {
 	name;
 	email;
 	role;
-
-	tasks = [];
-	comments = [];
+    assignedTasks = [];
 
 	constructor(jsonObject) {
 		this.id = jsonObject.id;
@@ -16,8 +14,8 @@ class user {
 
 	displayTasks() {
 		let output = "";
-		this.tasks.forEach((e) => {
-			output += e + "\n";
+		this.assignedTasks.forEach((element) => {
+			output += element + "\n";
 		});
 		return output;
 	}
