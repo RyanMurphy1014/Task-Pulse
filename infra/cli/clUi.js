@@ -1,4 +1,3 @@
-const userInput = require("readline-sync");
 const loginInteractor = require("../../interactors/loginInteractor");
 const dbInteractor = require("../../interactors/dbInteractor");
 const { user } = require("../../entities/user");

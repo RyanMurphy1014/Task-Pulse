@@ -3,32 +3,6 @@ class task {
   description;
   status;
   deadline;
-    getTitle(){
-        return this.title;
-    }
-    getDescription(){
-        return this.description;
-    }
-    getStatus(){
-        return this.status;
-    }
-    getDeadline(){
-        return this.deadline;
-    }
-
-    setTitle(title){
-        this.title = title;
-    }
-    setDescription(description){
-        this.description = description;
-    }
-    setStatus(status){
-        this.status = status;
-    }
-    setDeadline(deadline){
-        this.deadline = deadline;
-    }
-
   setStatus(statusCode) {
     if (statusCode === 0) {
       this.status = "Started";

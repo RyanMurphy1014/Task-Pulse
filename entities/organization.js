@@ -1,26 +1,12 @@
 const { parse } = require("dotenv");
-const { team } = require("./team");
 
 class organization {
-	name;
-	teams = [];
 
-	constructor(jsonObject) {
-		this.name = jsonObject.name;
-		this.teams = jsonObject.teams;
+	name;
+
+	constructor(name) {
+		this.name = name;
 	}
-    getName(){
-        return this.name;
-    }
-    getTeams(){
-        return this.teams;
-    }
-    setName(name){
-        this.name = name;
-    }
-    setTeams(teams){
-        this.teams = teams;
-    }
 
 	getUser(id) {
 		let output = null;
