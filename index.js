@@ -5,7 +5,8 @@ async function main() {
             "Task Pulse is starting up in Command Line Interface configuration."
         );
 
-        const cliUI = require("./infra/cli/clUi.js");
+        const apiRoutes = require("./infra/webServer/server")
+       // const cliUI = require("./infra/cli/clUi.js");
     }
 }
 main();
