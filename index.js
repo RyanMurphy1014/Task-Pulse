@@ -1,12 +1,5 @@
 require("dotenv").config();
 async function main() {
-    if (process.env.OUTPUT === "cli") {
-        console.log(
-            "Task Pulse is starting up in Command Line Interface configuration."
-        );
-
-        const apiRoutes = require("./infra/webServer/server")
-       // const cliUI = require("./infra/cli/clUi.js");
-    }
+    const apiRoutes = require("./infra/webServer/server")
 }
 main();

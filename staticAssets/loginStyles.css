@@ -36,6 +36,8 @@ form{
     border-radius: 0.5em;
     background: linear-gradient(135deg, #0ea08f 25%, transparent 25%) -32px 0/ 64px 64px, linear-gradient(225deg, rgba(14,160,143,0.5) 25%, transparent 25%) -32px 0/ 64px 64px, linear-gradient(315deg, #0ea08f 25%, transparent 25%) 0 0/ 64px 64px, linear-gradient(45deg, rgba(14,160,143,0.5) 25%, #087761 25%) 0 0/ 64px 64px;
     background-color: #087761;
+    box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+    border: solid 4px rgba(0, 0, 0, 0.2);
 
 
 }
@@ -45,8 +47,9 @@ input{
     border-radius: 10px;
     padding: 0.75rem;
     border-style: none;
-    width: 70%;
+    width: 75%;
     background:rgba(255, 255, 255, 0.65);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
 }
 
 span{
@@ -56,8 +59,13 @@ span{
 }
 
 svg{
-    padding-right: 0.5rem;
-    padding-top: 0.35rem;
+    position: absolute;
+    padding-top: 0.5rem;
+    z-index: 2;
+    padding-left: 10rem;
+    pointer-events: none;
+    color: rgba(0, 0, 0, 0.8);
+
 }
 
 h1, button{
@@ -67,6 +75,7 @@ h1, button{
     margin: 5px;
     border-style: solid;
     border-width: 0.15rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
 }
 
 button{
@@ -90,3 +99,21 @@ button{
     background-color: var(--secondary);
     color:white;
 }
+
+a, p{
+    color: var(--text);
+    font-family: monospace;
+}
+
+#loginButton{
+    align-self: center;
+}
+
+footer{
+    padding-left: 1rem;
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+

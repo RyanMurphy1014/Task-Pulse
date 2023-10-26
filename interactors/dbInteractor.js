@@ -1,5 +1,9 @@
 //Implementation imports
+import { createClient } from '@supabase/supabase-js'
 
+const supabaseUrl = 'https://deuzrjchsgufllorcpuk.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 const databaseImplementationCredentials = require("../infra/db/mockCredentials");
 const databaseImplementationOrganizations = require("../infra/db/dbConnector");
 
