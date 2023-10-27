@@ -16,6 +16,13 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
+    if(req.headers.cookie != undefined){
+        if(req.headers.cookie.includes("login_token")){
+            console.log("USER AUTHENTICATED");
+        }
+    }else{
+        console.log("Unauthenticated user");
+    }
     res.render('login.ejs');
 });
     

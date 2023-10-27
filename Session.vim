@@ -13,20 +13,35 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +1 infra/db/loginInteractor.js
-badd +111 staticAssets/loginStyles.css
+badd +53 staticAssets/loginStyles.css
 badd +14 views/login.ejs
-badd +13 infra/webServer/server.js
-badd +1 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
-badd +4 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
-badd +6 ~/Dev/Task-Pulse/interactors/dbInteractor.js
-badd +8 index.js
+badd +22 infra/webServer/server.js
+badd +2 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
+badd +7 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+badd +3 index.js
 badd +1 ~/Dev/Task-Pulse/staticAssets/TaskPulseLogo.png
+badd +1 infra/cli/clUi.js
+badd +12 package.json
+badd +9 NvimTree_1
+badd +0 man://property(7ssl)
+badd +7 ~/Dev/Task-Pulse/infra/db/supabaseConnection.js
 argglobal
 %argdel
-edit ~/Dev/Task-Pulse/interactors/dbInteractor.js
+edit infra/webServer/server.js
+let s:save_splitbelow = &splitbelow
+let s:save_splitright = &splitright
+set splitbelow splitright
+let &splitbelow = s:save_splitbelow
+let &splitright = s:save_splitright
+wincmd t
+let s:save_winminheight = &winminheight
+let s:save_winminwidth = &winminwidth
+set winminheight=0
+set winheight=1
+set winminwidth=0
+set winwidth=1
 argglobal
-balt views/login.ejs
+balt staticAssets/loginStyles.css
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -37,11 +52,11 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 7 - ((6 * winheight(0) + 17) / 34)
+let s:l = 1 - ((0 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 7
+keepjumps 1
 normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
@@ -50,12 +65,13 @@ endif
 unlet! s:wipebuf
 set winheight=1 winwidth=20
 let &shortmess = s:shortmess_save
+let &winminheight = s:save_winminheight
+let &winminwidth = s:save_winminwidth
 let s:sx = expand("<sfile>:p:r")."x.vim"
 if filereadable(s:sx)
   exe "source " . fnameescape(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
-nohlsearch
 let g:this_session = v:this_session
 let g:this_obsession = v:this_session
 doautoall SessionLoadPost
