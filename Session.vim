@@ -14,10 +14,10 @@ else
   set shortmess=aoO
 endif
 badd +53 staticAssets/loginStyles.css
-badd +14 views/login.ejs
-badd +22 infra/webServer/server.js
+badd +7 views/login.ejs
+badd +43 infra/webServer/server.js
 badd +2 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
-badd +7 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+badd +16 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
 badd +3 index.js
 badd +1 ~/Dev/Task-Pulse/staticAssets/TaskPulseLogo.png
 badd +1 infra/cli/clUi.js
@@ -25,9 +25,12 @@ badd +12 package.json
 badd +9 NvimTree_1
 badd +0 man://property(7ssl)
 badd +7 ~/Dev/Task-Pulse/infra/db/supabaseConnection.js
+badd +14 ~/Dev/Task-Pulse/views/home.ejs
+badd +1 ~/Dev/Task-Pulse/views/home.html
+badd +1 ~/Dev/Task-Pulse/staticAssets/homeStyles.css
 argglobal
 %argdel
-edit infra/webServer/server.js
+edit ~/Dev/Task-Pulse/infra/webServer/routes/login.js
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -41,7 +44,7 @@ set winheight=1
 set winminwidth=0
 set winwidth=1
 argglobal
-balt staticAssets/loginStyles.css
+balt infra/webServer/server.js
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}

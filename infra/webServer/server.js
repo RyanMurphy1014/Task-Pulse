@@ -5,8 +5,6 @@ const path = require('path')
 const bodyParser = require('body-parser')
 
 
-
-
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, '../../staticAssets')));
@@ -19,12 +17,18 @@ app.get("/", (req, res) => {
     if(req.headers.cookie != undefined){
         if(req.headers.cookie.includes("login_token")){
             console.log("USER AUTHENTICATED");
+            res.render('home.ejs');
         }
     }else{
         console.log("Unauthenticated user");
     }
     res.render('login.ejs');
 });
+
+app.get("/logout", (req, res) => {
+    res.clearCookie('login_token');
+    res.redirect("/");
+})
     
 app.listen(port, () => {
    console.log("TaskPulse server is running on port " + port);

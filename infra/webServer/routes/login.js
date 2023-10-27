@@ -7,13 +7,13 @@ router.post("/", async (req, res) => {
     if(await isValidLogin(req.body.email, req.body.password)){
         const uuid = crypto.randomUUID();
         res.cookie('login_token', uuid);
-        res.send("Valid Login! Make home page html");
+        res.redirect('/');
 
         console.log(uuid)
         const { error } = await supabase
         .from('credentials')
         .update({login_token: uuid})
-        .eq("user_id", 7);
+        .eq("email", req.body.email);
         console.log(error)
     }else{
         res.send("Invalid login! Get out! Create error page, redirct to home");
