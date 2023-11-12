@@ -18,7 +18,6 @@ router.post("/", async (req, res) => {
     }else{
         res.send("Invalid login! Get out! Create error page, redirct to home");
     }
-
 }); 
 
 async function isValidLogin(email, password){
@@ -28,8 +27,12 @@ async function isValidLogin(email, password){
     .eq('email', email)
     .eq('password', password);
     
-    if(loginAttempt.data.length > 0){
-        return true;
+    try {
+        if(loginAttempt.data.length > 0){
+            return true;
+        }
+    } catch (error) {
+        console.log("Invalid login")
     }
     return false;
 }

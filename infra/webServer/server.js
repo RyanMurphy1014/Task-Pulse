@@ -25,11 +25,20 @@ app.get("/", (req, res) => {
     res.render('login.ejs');
 });
 
-app.get("/logout", (req, res) => {
-    res.clearCookie('login_token');
-    res.redirect("/");
-})
-    
+
+//app.get("/logout", async (req, res) => {
+    //const currentUserEmail = await supabase
+        //.from('credentials')
+        //.select('email')
+        //.eq('login_token', req.headers.cookie.splice())
+    //res.clearCookie('login_token');
+    //const {error} = supabase
+    //.from('credentials')
+    //.update({login_token: null})
+    //.eq()
+    //res.redirect("/");
+//})
+    //
 app.listen(port, () => {
    console.log("TaskPulse server is running on port " + port);
 });
@@ -41,6 +50,8 @@ const projectsRouter = require('./routes/projects');
 const taskRouter = require('./routes/task');
 const organizationRouter = require('./routes/organization');
 const loginRouter = require('./routes/login')
+const registerRouter = require('./routes/register')
+app.use("/register", registerRouter);
 app.use("/users", userRouter);
 app.use("/projects", projectsRouter);
 app.use("/tasks", taskRouter);
