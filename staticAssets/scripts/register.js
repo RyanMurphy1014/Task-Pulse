@@ -21,7 +21,7 @@ async function registerUser(){
             },
             body: JSON.stringify(userCredentials)
         })
-        const result = await response.status;
+        const result = response.status;
         console.log(`Request Sent: ${result}`)
     } catch (error) {
         console.log(`Request Not Sent: ${error}`)

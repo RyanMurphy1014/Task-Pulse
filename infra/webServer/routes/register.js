@@ -1,10 +1,10 @@
-const express= require('express');
+import express from 'express';
 const router = express.Router();
 
 const { createHash } = require('crypto');
 const { supabase } = require('../../db/supabaseConnection')
 
-router.get("/", (eq, res) => {
+router.get("/", (res) => {
     res.render('register.ejs');
 }); 
 
