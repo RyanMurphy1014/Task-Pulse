@@ -14,25 +14,48 @@ else
   set shortmess=aoO
 endif
 badd +53 staticAssets/loginStyles.css
-badd +32 views/login.ejs
-badd +28 infra/webServer/server.js
-badd +2 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
-badd +41 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
-badd +2 index.js
+badd +1 views/login.ejs
+badd +60 infra/webServer/server.js
+badd +3 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
+badd +1 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+badd +1 index.js
 badd +1 ~/Dev/Task-Pulse/staticAssets/TaskPulseLogo.png
 badd +54 infra/cli/clUi.js
 badd +12 package.json
-badd +0 man://property(7ssl)
-badd +7 ~/Dev/Task-Pulse/infra/db/supabaseConnection.js
+badd +1 man://property(7ssl)
+badd +4 ~/Dev/Task-Pulse/infra/db/supabaseConnection.js
 badd +14 ~/Dev/Task-Pulse/views/home.ejs
 badd +1 ~/Dev/Task-Pulse/views/home.html
 badd +1 ~/Dev/Task-Pulse/staticAssets/homeStyles.css
-badd +13 ~/Dev/Task-Pulse/views/register.ejs
+badd +1 ~/Dev/Task-Pulse/views/register.ejs
 badd +5 ~/Dev/Task-Pulse/staticAssets/register.js
-badd +5 ~/Dev/Task-Pulse/infra/webServer/routes/register.js
-badd +1 ~/Dev/Task-Pulse/infra/webServer/routes/projects.js
+badd +3 ~/Dev/Task-Pulse/infra/webServer/routes/register.js
+badd +13 ~/Dev/Task-Pulse/infra/webServer/routes/projects.js
+badd +2 staticAssets/scripts/register.js
+badd +16 ~/Dev/Task-Pulse/infra/webServer/./routes/users.js
+badd +2 ~/Dev/Task-Pulse/infra/webServer/./routes/task.js
+badd +1 entities/organization.js
 argglobal
 %argdel
+edit index.js
+argglobal
+balt ~/Dev/Task-Pulse/infra/db/supabaseConnection.js
+setlocal fdm=manual
+setlocal fde=0
+setlocal fmr={{{,}}}
+setlocal fdi=#
+setlocal fdl=0
+setlocal fml=1
+setlocal fdn=20
+setlocal fen
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 1
+normal! 0
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

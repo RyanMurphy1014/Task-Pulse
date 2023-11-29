@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A project management web app used to structure your projects as well as manage your teams.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"

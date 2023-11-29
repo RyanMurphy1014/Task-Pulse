@@ -1,8 +1,8 @@
-const express= require('express');
-const router = express.Router();
-const { supabase } = require("../../db/supabaseConnection")
-const crypto = require('crypto')
+import express from 'express'
+import supabase from "../../db/supabaseConnection.js"
+import crypto from 'crypto'
 
+const router = express.Router();
 router.post("/", async (req, res) => {
     if(await isValidLogin(req.body.email, req.body.password)){
         const uuid = crypto.randomUUID();
@@ -37,5 +37,4 @@ async function isValidLogin(email, password){
     return false;
 }
 
-
-module.exports = router;
+export default router;

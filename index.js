@@ -1,4 +1,6 @@
-require("dotenv").config();
+import 'dotenv/config';
 
-const apiRoutes = require("./infra/webServer/server")
+
+import "./infra/webServer/server.js"
+
 

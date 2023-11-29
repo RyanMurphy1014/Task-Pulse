@@ -1,8 +1,8 @@
 import express from 'express';
 const router = express.Router();
 
-const { createHash } = require('crypto');
-const { supabase } = require('../../db/supabaseConnection')
+import { createHash } from 'crypto'
+import supabase from '../../db/supabaseConnection.js'
 
 router.get("/", (res) => {
     res.render('register.ejs');
@@ -80,4 +80,4 @@ function generateSalt(){
 }
 
 
-module.exports = router;
+export default router;
