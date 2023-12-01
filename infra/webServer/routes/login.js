@@ -1,6 +1,7 @@
 import express from 'express'
 import supabase from "../../db/supabaseConnection.js"
 import crypto from 'crypto'
+import passwordUtils from '../../crypto/hasher.js'
 
 const router = express.Router();
 router.post("/", async (req, res) => {
@@ -20,13 +21,16 @@ router.post("/", async (req, res) => {
     }
 }); 
 
-async function isValidLogin(email, password){
+async function isValidLogin(email, unHashed_password){
+    const hashed_password = await hashPassword(email, unHashed_password);
+    console.log(hashed_password)
     const loginAttempt = await supabase
     .from('credentials')
-    .select('email')
+    .select('user_id')
     .eq('email', email)
-    .eq('password', password);
+    .eq('hashed_password', hashed_password);
     
+    console.log(loginAttempt)
     try {
         if(loginAttempt.data.length > 0){
             return true;
@@ -35,6 +39,17 @@ async function isValidLogin(email, password){
         console.log("Invalid login")
     }
     return false;
+}
+
+async function hashPassword(email, unHashed_password){
+    const saltLookup = await supabase
+    .from('credentials')
+    .select('salt')
+    .eq('email', email);
+
+    return passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data);
+
+
 }
 
 export default router;

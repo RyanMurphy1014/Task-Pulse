@@ -1,10 +1,10 @@
 import express from 'express';
 const router = express.Router();
 
-import { createHash } from 'crypto'
 import supabase from '../../db/supabaseConnection.js'
+import hasher from '../../crypto/hasher.js'
 
-router.get("/", (res) => {
+router.get("/", (req, res) => {
     res.render('register.ejs');
 }); 
 
@@ -12,14 +12,17 @@ router.post("/newUser", async (req, res) => {
     const userCredentials = req.body;
 
     if(userCredentials.email.includes('@')){
-        const userCreationError = await insertUser(userCredentials);
-        const credentialCreationError = await insertCredentials(userCredentials);
-        if( userCreationError === null && credentialCreationError === null){
-            res.status(200).send("User Created");
+        const userCreationReq = await insertUser(userCredentials);
+        const credentialCreationReq = await insertCredentials(userCredentials);
+        console.log("~~~Routes/Register.js 17: ")
+        console.log(userCreationReq)
+        if( userCreationReq.error === null && credentialCreationReq.error === null){
+            res.render('home.ejs')
         }else{
-            console.log("User Creation Error - ", userCreationError.message);
+            console.log("User Creation Error - ", userCreationReq);
             console.log()
-            console.log("Credential Creation Error - ", credentialCreationError.message);
+            console.log("Credential Creation Error - ", credentialCreationReq);
+            console.log()
             res.status(500).send("Failed to create User")
         }
     }else{
@@ -34,49 +37,24 @@ async function insertCredentials(userCredentials){
         .eq('email', userCredentials.email)
 
 
-    const passwordSet = generatePasswordSet(userCredentials.password)
-    const { error } = await supabase.from('credentials')
+    const passwordSet = hasher.generatePasswordSet(userCredentials.password)
+    const credentialLookup= await supabase.from('credentials')
     .insert({email: userCredentials.email,
         hashed_password: passwordSet.hashed,
         salt: passwordSet.salt,
         user_id: data[0].user_id});
-    return error;
+    return credentialLookup;
 }
 
 async function insertUser(userCredentials){
-    const { error } = await supabase
+    const insertReq = await supabase
         .from('users')
         .insert({
             name: userCredentials.name,
             email: userCredentials.email,
             parent_organization_id: userCredentials.organizationId,
         })
-    return error;
-}
-
-function generatePasswordSet(password){
-    const salt = generateSalt();
-    const saltedPassword = password + salt;  
-    const passwordSet = {
-        hashed: createHash('sha256').update(saltedPassword).digest('hex'),
-        salt: salt,
-    }
-    return passwordSet;
-}
-
-
-function generateSalt(){
-    const saltLength = 30;
-    const availableCharacters = ['a','c','e','g','i','k','m','o','q','s','u','w',
-       'x','z','2','4','6','8','0','@','$','^','*'];
-    let output = '';
-
-    for(let i = 0; i < saltLength; i++){
-        const randomCharacterIndex = 
-            Math.floor(Math.random() * availableCharacters.length);
-        output += availableCharacters[randomCharacterIndex];
-    }
-    return output;
+    return insertReq;
 }
 
 
