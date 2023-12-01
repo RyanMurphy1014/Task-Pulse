@@ -14,14 +14,12 @@ router.post("/newUser", async (req, res) => {
     if(userCredentials.email.includes('@')){
         const userCreationReq = await insertUser(userCredentials);
         const credentialCreationReq = await insertCredentials(userCredentials);
-        console.log("~~~Routes/Register.js 17: ")
-        console.log(userCreationReq)
         if( userCreationReq.error === null && credentialCreationReq.error === null){
             res.render('home.ejs')
         }else{
-            console.log("User Creation Error - ", userCreationReq);
+            console.log("User Creation Error - ", userCreationReq.error);
             console.log()
-            console.log("Credential Creation Error - ", credentialCreationReq);
+            console.log("Credential Creation Error - ", credentialCreationReq.error);
             console.log()
             res.status(500).send("Failed to create User")
         }

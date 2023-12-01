@@ -2,16 +2,18 @@ import { createHash } from 'crypto'
 
 export function generatePasswordSet(password){
     const salt = generateSalt();
-    const saltedPassword = password + salt;  
     const passwordSet = {
-        hashed: createHash('sha256').update(saltedPassword).digest('hex'),
+        hashed: generateHashedPassword(password, salt),
         salt: salt,
     }
     return passwordSet;
 }
 
 export function generateHashedPassword(unhashed_password, salt){
-    return createHash('sha256').update(unhashed_password + salt).digest('hex');
+    const hashed_password = createHash('sha256').update(unhashed_password + salt).digest('hex');
+    console.log(salt)
+    console.log(`Salt ${salt}   ~   HashedPassword ${hashed_password}`)
+    return hashed_password;
 } 
 
 

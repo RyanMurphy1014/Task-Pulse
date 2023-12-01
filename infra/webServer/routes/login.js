@@ -10,7 +10,6 @@ router.post("/", async (req, res) => {
         res.cookie('login_token', uuid);
         res.redirect('/');
 
-        console.log(uuid)
         const { error } = await supabase
         .from('credentials')
         .update({login_token: uuid})
@@ -23,14 +22,12 @@ router.post("/", async (req, res) => {
 
 async function isValidLogin(email, unHashed_password){
     const hashed_password = await hashPassword(email, unHashed_password);
-    console.log(hashed_password)
     const loginAttempt = await supabase
     .from('credentials')
     .select('user_id')
     .eq('email', email)
     .eq('hashed_password', hashed_password);
     
-    console.log(loginAttempt)
     try {
         if(loginAttempt.data.length > 0){
             return true;
@@ -47,7 +44,10 @@ async function hashPassword(email, unHashed_password){
     .select('salt')
     .eq('email', email);
 
-    return passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data);
+
+    console.log("________________________________LOGIN 48")
+    console.log(saltLookup.data[0].salt)
+    return passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
 
 
 }
