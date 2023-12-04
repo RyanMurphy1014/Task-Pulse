@@ -2,6 +2,7 @@ import bodyParser from 'body-parser'
 import path from 'path'
 import express from "express";
 import { fileURLToPath } from 'url';
+import supabase from '../db/supabaseConnection.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
@@ -32,19 +33,24 @@ const __dirname = path.dirname(__filename)
     });
 
 
-    //app.get("/logout", async (req, res) => {
-        //const currentUserEmail = await supabase
-            //.from('credentials')
-            //.select('email')
-            //.eq('login_token', req.headers.cookie.splice())
-        //res.clearCookie('login_token');
-        //const {error} = supabase
-        //.from('credentials')
-        //.update({login_token: null})
-        //.eq()
-        //res.redirect("/");
-    //})
-        //
+    app.get("/logout", async (req, res) => {
+        console.log()
+        
+        const currentUserEmail = await supabase
+            .from('credentials')
+            .select('email')
+            .eq('login_token', req.headers.cookie.split("=")[1])
+
+        res.clearCookie('login_token');
+
+        console.log(currentUserEmail)
+        const clearLoginToken = await supabase
+        .from('credentials')
+        .update({login_token: null})
+        .eq('email', currentUserEmail.data[0].email)
+        res.redirect("/");
+    })
+        
     app.listen(port, () => {
        console.log("TaskPulse server is running on port " + port);
     });

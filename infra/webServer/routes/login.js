@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
         .eq("email", req.body.email);
         console.log(error)
     }else{
-        res.send("Invalid login! Get out! Create error page, redirct to home");
+        res.render("login.ejs");
     }
 }); 
 
@@ -45,9 +45,12 @@ async function hashPassword(email, unHashed_password){
     .eq('email', email);
 
 
-    console.log("________________________________LOGIN 48")
-    console.log(saltLookup.data[0].salt)
-    return passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
+    try {
+        const salt = passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
+        return salt;
+    } catch (error) {
+        console.log("Invalid login - found during salt lookup")
+    }
 
 
 }
