@@ -38,7 +38,6 @@ const __dirname = path.dirname(__filename)
 
 
     app.get("/logout", async (req, res) => {
-        console.log()
         
         const currentUserEmail = await supabase
             .from('credentials')
@@ -54,8 +53,7 @@ const __dirname = path.dirname(__filename)
             .update({login_token: null})
             .eq('email', currentUserEmail.data[0].email)
         } catch (error) {
-            console.log(error)
-            console.log("Couldn't find token'")
+            console.log("Couldn't find login token")
         }
         res.redirect("/");
     })

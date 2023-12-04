@@ -13,11 +13,11 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +37 staticAssets/loginStyles.css
+badd +35 staticAssets/loginStyles.css
 badd +1 views/login.ejs
 badd +58 infra/webServer/server.js
 badd +3 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
-badd +12 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+badd +10 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
 badd +4 index.js
 badd +1 ~/Dev/Task-Pulse/staticAssets/TaskPulseLogo.png
 badd +54 infra/cli/clUi.js
@@ -56,7 +56,7 @@ set winheight=1
 set winminwidth=0
 set winwidth=1
 argglobal
-balt infra/crypto/hasher.js
+balt ~/Dev/Task-Pulse/infra/webServer/routes/login.js
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -72,7 +72,7 @@ if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
 keepjumps 58
-normal! 026|
+normal! 09|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

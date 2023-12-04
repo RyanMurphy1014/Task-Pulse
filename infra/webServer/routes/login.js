@@ -51,7 +51,7 @@ async function hashPassword(email, unHashed_password){
         const hashedPassword = passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
         return hashedPassword;
     } catch (error) {
-        console.log("Invalid login - found during salt lookup")
+        console.log("Couldn't resolve password / Likely invalid credentials")
         return null
     }
 
