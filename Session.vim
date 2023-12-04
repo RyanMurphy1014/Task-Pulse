@@ -13,11 +13,11 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +53 staticAssets/loginStyles.css
+badd +37 staticAssets/loginStyles.css
 badd +1 views/login.ejs
-badd +32 infra/webServer/server.js
+badd +58 infra/webServer/server.js
 badd +3 ~/Dev/Task-Pulse/infra/webServer/routes/organization.js
-badd +50 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+badd +12 ~/Dev/Task-Pulse/infra/webServer/routes/login.js
 badd +4 index.js
 badd +1 ~/Dev/Task-Pulse/staticAssets/TaskPulseLogo.png
 badd +54 infra/cli/clUi.js
@@ -36,12 +36,13 @@ badd +16 ~/Dev/Task-Pulse/infra/webServer/./routes/users.js
 badd +2 ~/Dev/Task-Pulse/infra/webServer/./routes/task.js
 badd +47 entities/organization.js
 badd +2 .env
-badd +7 infra/crypto/hasher.js
+badd +1 infra/crypto/hasher.js
 badd +1 ~/.local/state/nvim/lsp.log
 badd +616 ~/.cache/typescript/5.3/node_modules/@types/express-serve-static-core/index.d.ts
+badd +15 ~/Dev/Task-Pulse/views/login_invalidLogin.ejs
 argglobal
 %argdel
-edit ~/Dev/Task-Pulse/infra/webServer/routes/login.js
+edit infra/webServer/server.js
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -55,7 +56,7 @@ set winheight=1
 set winminwidth=0
 set winwidth=1
 argglobal
-balt ~/Dev/Task-Pulse/views/register.ejs
+balt infra/crypto/hasher.js
 setlocal fdm=manual
 setlocal fde=0
 setlocal fmr={{{,}}}
@@ -66,12 +67,12 @@ setlocal fdn=20
 setlocal fen
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 17) / 34)
+let s:l = 58 - ((16 * winheight(0) + 17) / 34)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 58
+normal! 026|
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf

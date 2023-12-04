@@ -21,15 +21,19 @@ const __dirname = path.dirname(__filename)
     app.use(bodyParser.json());
 
     app.get("/", (req, res) => {
-        if(req.headers.cookie != undefined){
+        if(req.headers.cookie != null){
             if(req.headers.cookie.includes("login_token")){
+                res.cookie("login_failure", false)
                 console.log("USER AUTHENTICATED");
                 res.render('home.ejs');
+            }if(req.headers.cookie.includes("login_failure=true")){
+                console.log("Incorrect username or password")
+                res.render('login_invalidLogin.ejs')
             }
-        }else{
+        } else{
             console.log("Unauthenticated user");
+            res.render('login.ejs');
         }
-        res.render('login.ejs');
     });
 
 
@@ -42,12 +46,17 @@ const __dirname = path.dirname(__filename)
             .eq('login_token', req.headers.cookie.split("=")[1])
 
         res.clearCookie('login_token');
+        res.clearCookie('login_failure');
 
-        console.log(currentUserEmail)
-        const clearLoginToken = await supabase
-        .from('credentials')
-        .update({login_token: null})
-        .eq('email', currentUserEmail.data[0].email)
+        try {
+            const clearLoginToken = await supabase
+            .from('credentials')
+            .update({login_token: null})
+            .eq('email', currentUserEmail.data[0].email)
+        } catch (error) {
+            console.log(error)
+            console.log("Couldn't find token'")
+        }
         res.redirect("/");
     })
         

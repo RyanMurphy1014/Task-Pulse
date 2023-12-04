@@ -8,6 +8,7 @@ router.post("/", async (req, res) => {
     if(await isValidLogin(req.body.email, req.body.password)){
         const uuid = crypto.randomUUID();
         res.cookie('login_token', uuid);
+        res.cookie("login_failure", false)
         res.redirect('/');
 
         const { error } = await supabase
@@ -16,7 +17,8 @@ router.post("/", async (req, res) => {
         .eq("email", req.body.email);
         console.log(error)
     }else{
-        res.render("login.ejs");
+        res.cookie("login_failure", true);
+        res.render("login_invalidLogin.ejs");
     }
 }); 
 
@@ -46,10 +48,11 @@ async function hashPassword(email, unHashed_password){
 
 
     try {
-        const salt = passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
-        return salt;
+        const hashedPassword = passwordUtils.generateHashedPassword(unHashed_password, saltLookup.data[0].salt);
+        return hashedPassword;
     } catch (error) {
         console.log("Invalid login - found during salt lookup")
+        return null
     }
 
 

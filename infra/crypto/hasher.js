@@ -11,8 +11,6 @@ export function generatePasswordSet(password){
 
 export function generateHashedPassword(unhashed_password, salt){
     const hashed_password = createHash('sha256').update(unhashed_password + salt).digest('hex');
-    console.log(salt)
-    console.log(`Salt ${salt}   ~   HashedPassword ${hashed_password}`)
     return hashed_password;
 } 
 

@@ -34,6 +34,7 @@ form{
     background-color:var(--primary);
     padding: 50px;
     border-radius: 0.5em;
+    color: red;
     background: linear-gradient(135deg, #0ea08f 25%, transparent 25%) -32px 0/ 64px 64px, linear-gradient(225deg, rgba(14,160,143,0.5) 25%, transparent 25%) -32px 0/ 64px 64px, linear-gradient(315deg, #0ea08f 25%, transparent 25%) 0 0/ 64px 64px, linear-gradient(45deg, rgba(14,160,143,0.5) 25%, #087761 25%) 0 0/ 64px 64px;
     background-color: #087761;
     box-shadow: 0 0 15px rgba(0, 0, 0, .5);
@@ -51,6 +52,7 @@ input{
     background:rgba(255, 255, 255, 0.65);
     box-shadow: 0 0 10px rgba(0, 0, 0, .5);
 }
+
 
 span{
     display:flex;
