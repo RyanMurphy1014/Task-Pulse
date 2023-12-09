@@ -15,7 +15,6 @@ router.post("/", async (req, res) => {
         .from('credentials')
         .update({login_token: uuid})
         .eq("email", req.body.email);
-        console.log(error)
     }else{
         res.cookie("login_failure", true);
         res.render("login_invalidLogin.ejs");
