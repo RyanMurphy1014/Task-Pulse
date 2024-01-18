@@ -5,7 +5,7 @@ import supabase from '../../db/supabaseConnection.js'
 import hasher from '../../crypto/hasher.js'
 
 router.get("/", (req, res) => {
-    res.render('register.ejs');
+    res.sendFile('register.html');
 }); 
 
 router.post("/newUser", async (req, res) => {
@@ -15,7 +15,7 @@ router.post("/newUser", async (req, res) => {
         const userCreationReq = await insertUser(userCredentials);
         const credentialCreationReq = await insertCredentials(userCredentials);
         if( userCreationReq.error === null && credentialCreationReq.error === null){
-            res.render('home.ejs')
+            res.sendFile('home.html')
         }else{
             console.log("User Creation Error - ", userCreationReq.error);
             console.log()

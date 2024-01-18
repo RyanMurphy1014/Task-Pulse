@@ -12,7 +12,6 @@ const app = express();
 const port = process.env.PORT;
 
 
-app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, '../../staticAssets')));
 app.use(bodyParser.urlencoded({
@@ -21,18 +20,22 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
+    const rootOptions = {
+        root: path.join(__dirname, '../../views'),
+    }
+
     if (req.headers.cookie != null) {
         if (req.headers.cookie.includes("login_token")) {
             res.cookie("login_failure", false)
             console.log("USER AUTHENTICATED");
-            res.render('home.ejs');
+            res.sendFile('home.html', rootOptions);
         } if (req.headers.cookie.includes("login_failure=true")) {
             console.log("Incorrect username or password")
-            res.render('login_invalidLogin.ejs')
+            res.sendFile('login_invalidLogin.html')
         }
     } else {
         console.log("Unauthenticated user");
-        res.render('login.ejs');
+        res.sendFile('login.html', rootOptions);
     }
 });
 

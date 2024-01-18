@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
         .eq("email", req.body.email);
     }else{
         res.cookie("login_failure", true);
-        res.render("login_invalidLogin.ejs");
+        res.sendFile("login_invalidLogin.html");
     }
 }); 
 
