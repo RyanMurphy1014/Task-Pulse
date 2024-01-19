@@ -12,8 +12,8 @@ html{
 
 a{
     text-decoration: none;
-
     color: var(--text);
+    text-align: center;
 }
 
 body{
@@ -74,32 +74,29 @@ main{
 
 #currentPage{
     background-color: whitesmoke;
-    margin-left: 10%;
 }
 
 #notifications{
     background-color: whitesmoke;
-    margin-left: 50%;
 }
 
 #profile{
     background-color: whitesmoke;
-    margin-left: 2%;
-    margin-right: 5%;
 }
 
 header > span {
-    padding: 0.5rem;
+    padding: 1rem;
+    margin: 1rem;
+    text-align: center;
     border-radius: 0.25rem;
 }
 
+
 header{
     grid-area: head;
-    grid-auto-flow: row;
     background-color: var(--accent);
     display: flex;
-    flex-shrink: 0;
+    justify-items: center;
     align-items: center;
-    width: 100%;
-    background-color: blue;
+
 }
