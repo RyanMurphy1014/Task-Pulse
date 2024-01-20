@@ -10,6 +10,14 @@ html{
     background-color: var(--background);
 }
 
+#pulseView{
+    background-color: #043d32;
+}
+
+#pulseViewSection{
+    background-color: #043d32;
+}
+
 a{
     text-decoration: none;
     color: var(--text);
