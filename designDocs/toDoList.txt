@@ -1,4 +1,3 @@
-1.Implement check to see if user is authorized
 2.Do not display anything without check for authorization
 3.Work on Pulse view
 

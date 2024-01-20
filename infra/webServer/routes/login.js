@@ -9,6 +9,15 @@ router.post("/", async (req, res) => {
         const uuid = crypto.randomUUID();
         res.cookie('login_token', uuid);
         res.cookie("login_failure", false)
+
+        const userInfo = await supabase
+            .from('users')
+            .select()
+            .eq('email', req.body.email)
+
+        res.cookie("user_id", userInfo.data.user_id)
+        res.cookie("role", userInfo.data.user_role)
+
         res.redirect('/');
 
         const { error } = await supabase
