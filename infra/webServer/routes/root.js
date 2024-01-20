@@ -2,7 +2,7 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
 
-import checkAuthentication from '../middleware/auth.js'
+import {checkAuthentication, checkAdmin} from '../middleware/auth.js'
 
 const router = express.Router();
 

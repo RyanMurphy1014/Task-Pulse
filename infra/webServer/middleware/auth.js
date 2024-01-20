@@ -1,7 +1,7 @@
 import supabase from '../../db/supabaseConnection.js'
 import cookieParser from 'cookie-parser';
 
-const checkAuthentication = async (req, res, next) => {
+export const checkAuthentication = async (req, res, next) => {
     cookieParser()(req, res, () => { });
 
     if (req.headers.cookie) {
@@ -18,7 +18,7 @@ const checkAuthentication = async (req, res, next) => {
     }
 }
 
-const checkAdmin = async (req, res, next) => {
+export const checkAdmin = async (req, res, next) => {
     cookieParser()(req, res, () => { });
 
     if (req.cookies.role != 'admin') {
@@ -28,4 +28,3 @@ const checkAdmin = async (req, res, next) => {
     }
 }
 
-export  {checkAuthentication, checkAdmin};
