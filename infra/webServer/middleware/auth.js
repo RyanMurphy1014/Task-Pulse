@@ -28,4 +28,4 @@ const checkAdmin = async (req, res, next) => {
     }
 }
 
-export default checkAuthentication;
+export  {checkAuthentication, checkAdmin};
