@@ -3,6 +3,7 @@ import path from 'path'
 import express from "express";
 import { fileURLToPath } from 'url';
 
+//Exposes path of this file
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename)
 
@@ -15,6 +16,9 @@ app.use(bodyParser.urlencoded({
     extended: true,
 }));
 app.use(bodyParser.json());
+
+
+
 
 //Router boilerplate
 import userRouter from './routes/users.js'
@@ -43,6 +47,8 @@ app.use("/logout", logoutRouter);
 
 import rootRouter from './routes/root.js'
 app.use("/", rootRouter);
+
+
 
 //Starts app
 app.listen(port, () => {

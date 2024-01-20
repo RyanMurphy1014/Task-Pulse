@@ -3,9 +3,7 @@ import supabase from '../../db/supabaseConnection.js';
 const router = express.Router();
 
 
-router.get("/", async (req, res) => {
-
-    const currentUserEmail = await supabase
+router.get("/", async (req, res) => { const currentUserEmail = await supabase
         .from('credentials')
         .select('email')
         .eq('login_token', req.headers.cookie.split("=")[1])

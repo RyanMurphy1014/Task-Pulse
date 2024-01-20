@@ -1,3 +1,7 @@
 1.Implement check to see if user is authorized
 2.Do not display anything without check for authorization
 3.Work on Pulse view
+
+Later:
+Clean up cookie login failure logic
+Fix nvim config for add to harpoon keybind
