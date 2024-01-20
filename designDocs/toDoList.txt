@@ -1,6 +1,8 @@
-2.Do not display anything without check for authorization
 3.Work on Pulse view
 
 Later:
 Clean up cookie login failure logic
 Fix nvim config for add to harpoon keybind
+
+Reminder:
+Authentication and Authoarization middlewares are in place
