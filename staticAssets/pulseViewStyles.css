@@ -78,6 +78,12 @@ section > a {
 main{
     grid-area: main;
     background-color: var(--background);
+    overflow: hidden;
+}
+
+canvas{
+    width: 100%;
+    height: 100%;
 }
 
 #currentPage{
