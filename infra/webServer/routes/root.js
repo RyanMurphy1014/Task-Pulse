@@ -2,15 +2,13 @@ import express from 'express'
 import path from 'path'
 import { fileURLToPath } from 'url';
 
-import {checkAuthentication, checkAdmin} from '../middleware/auth.js'
 
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-//Using authorization middleware
-router.get("/", checkAuthentication, (req, res) => {
+router.get("/", (req, res) => {
 
     //Holds path to views folder
     const sendFileOpts = {
