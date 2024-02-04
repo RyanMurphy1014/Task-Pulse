@@ -3,12 +3,6 @@ document.getElementById("canvasContainer").append(canvas);
 
 let renderer = canvas.getContext("2d");
 
-const nodeTypes = {
-    task: "task",
-    user: "user",
-    project: "project",
-}
-
 class taskNode {
     constructor(label, data_id) {
         this.type = "taskNode";
@@ -57,15 +51,18 @@ async function getAllUsers() {
     return output;
 }
 
-
-async function printUser(){
-    const users = await getAllUsers();
-    await createUserNode(users[0]);
+async function getUserById(id) {
+    const user = await fetch("/users/" + id)
+    const output = await allUsers.json()
+    return output;
 }
 
-async function createUserNode(data){
-    const newNode = new userNode(data.name, data.user_id)
-    console.log(newNode.toString())
+async function createUserNode(...data) {
+    let output;
+    for (let i = 0; i < data.length; i++) {
+        const newNode = new userNode(data.name, data.user_id)
+        output.push(newNode)
+    }
+    return output;
 }
-printUser();
 
