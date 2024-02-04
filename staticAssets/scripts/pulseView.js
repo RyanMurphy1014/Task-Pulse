@@ -9,42 +9,63 @@ const nodeTypes = {
     project: "project",
 }
 
-const nodeShapes = {
-    task: "square",
-    user: "circle",
-    project: "hexagon",
-}
-//Only pass in option from nodeShapes enum
-function getShape(nodeType){
-    let output;
-    switch(nodeType){
-        case "task":
-            output = nodeShapes.task;
-            break;
-        case "user":
-            output =  nodeShapes.user;
-            break;
-        case "project":
-            output = nodeShapes.project;
-            break;
-    }
-    return output;
-}
-
-class pulseNode {
-    constructor(nodeTypeEnumOption, label, data_id) {
-        this.type = nodeTypeEnumOption;
+class taskNode {
+    constructor(label, data_id) {
+        this.type = "taskNode";
+        this.shape = "square"
         this.label = label;
         this.data = data_id;
-
-        this.shape = getShape(this.type)
     }
-    
-    toString(){
+
+    toString() {
         return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
     }
 
 }
 
-const testNode = new pulseNode(nodeTypes.project, "Test project", "test data point")
-console.log(testNode.toString())
+class projectNode {
+    constructor(label, data_id) {
+        this.type = "projectNode";
+        this.shape = "hexagon"
+        this.label = label;
+        this.data = data_id;
+    }
+
+    toString() {
+        return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
+    }
+
+}
+
+class userNode {
+    constructor(label, data_id) {
+        this.type = "userNode";
+        this.shape = "circle"
+        this.label = label;
+        this.data = data_id;
+    }
+
+    toString() {
+        return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
+    }
+
+}
+
+async function getAllUsers() {
+    const allUsers = await fetch("/users/all")
+    const output = await allUsers.json()
+    return output;
+}
+
+
+async function printUser(){
+    const users = await getAllUsers();
+    await createUserNode(users[0]);
+}
+
+async function createUserNode(data){
+    const newNode = new userNode(data.name, data.user_id)
+    console.log(newNode.toString())
+}
+printUser();
+
