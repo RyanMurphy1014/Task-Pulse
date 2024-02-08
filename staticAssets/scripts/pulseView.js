@@ -1,8 +1,14 @@
+//==================================================
+//---------------------Constants------------------------
+//==================================================
 let canvas = document.createElement("canvas");
 document.getElementById("canvasContainer").append(canvas);
 
 let renderer = canvas.getContext("2d");
 
+//==================================================
+//---------------------Classes------------------------
+//==================================================
 class taskNode {
     constructor(label, data_id) {
         this.type = "taskNode";
@@ -16,7 +22,6 @@ class taskNode {
     }
 
 }
-
 class projectNode {
     constructor(label, data_id) {
         this.type = "projectNode";
@@ -30,7 +35,6 @@ class projectNode {
     }
 
 }
-
 class userNode {
     constructor(label, data_id) {
         this.type = "userNode";
@@ -42,27 +46,19 @@ class userNode {
     toString() {
         return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
     }
-
 }
 
-async function getAllUsers() {
-    const allUsers = await fetch("/users/all")
-    const output = await allUsers.json()
-    return output;
+//==================================================
+//---------------------LOGIC------------------------
+//==================================================
+
+
+
+async function getUsers() {
+    const users = await fetch("/users/all")
+    console.log(await users.json())
+    return users;
 }
 
-async function getUserById(id) {
-    const user = await fetch("/users/" + id)
-    const output = await allUsers.json()
-    return output;
-}
-
-async function createUserNode(...data) {
-    let output;
-    for (let i = 0; i < data.length; i++) {
-        const newNode = new userNode(data.name, data.user_id)
-        output.push(newNode)
-    }
-    return output;
-}
+getUsers()
 

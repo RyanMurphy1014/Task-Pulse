@@ -21,6 +21,9 @@ app.use(bodyParser.json());
 
 
 //Router boilerplate
+import rootRouter from './routes/root.js'
+app.use("/", rootRouter);
+
 import userRouter from './routes/users.js'
 app.use("/users", userRouter);
 
@@ -45,8 +48,6 @@ app.use("/pulseView", pulseViewRouter);
 import logoutRouter from './routes/logout.js'
 app.use("/logout", logoutRouter);
 
-import rootRouter from './routes/root.js'
-app.use("/", rootRouter);
 
 
 

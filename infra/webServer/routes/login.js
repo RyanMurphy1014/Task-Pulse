@@ -15,8 +15,12 @@ router.post("/", async (req, res) => {
             .select()
             .eq('email', req.body.email)
 
-        res.cookie("user_id", userInfo.data.user_id)
-        res.cookie("role", userInfo.data.user_role)
+        console.log(userInfo.data[0])
+
+        res.cookie("user_id", userInfo.data[0].user_id)
+        res.cookie("role", userInfo.data[0].user_role)
+        res.cookie("organization_id", userInfo.data[0].parent_organization_id)
+
 
         res.redirect('/');
 
@@ -26,7 +30,7 @@ router.post("/", async (req, res) => {
         .eq("email", req.body.email);
     }else{
         res.cookie("login_failure", true);
-        res.sendFile("login_invalidLogin.html");
+        res.sendFile("login_invalidLogin.html", {root: "./views"});
     }
 }); 
 
