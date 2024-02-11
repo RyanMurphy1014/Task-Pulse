@@ -2,9 +2,15 @@
 //------------------Initialization------------------
 //==================================================
 let canvas = document.createElement("canvas");
+
+let canvasCenter = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+}
+
 document.getElementById("canvasContainer").append(canvas);
 
-let renderer = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
 
 //==================================================
 //---------------------Classes------------------------
@@ -49,7 +55,7 @@ class userNode {
 }
 
 //==================================================
-//---------------------LOGIC------------------------
+//----------------Data Aggregation------------------
 //==================================================
 
 async function nodeFactory() {
@@ -59,6 +65,7 @@ async function nodeFactory() {
     const projectNodes = await generateNodes(orgData.projects, "project")
     const taskNodes = await generateNodes(orgData.tasks, "task")
 
+    //Gathers processed data into an output object
     const orgNodes = {
         userNodes: userNodes,
         projectNodes: projectNodes,
@@ -66,42 +73,74 @@ async function nodeFactory() {
     }
     return orgNodes
 
+    //Helper functions
     async function aggregateData() {
         const users = await fetch("/users/all")
         const tasks = await fetch("/tasks/all")
         const projects = await fetch("/projects/all");
 
-        const orgData = {
+        const fetchedData = {
             users: await users.json(),
             tasks: await tasks.json(),
             projects: await projects.json(),
         }
-        return orgData;
+        return fetchedData;
     }
 
     async function generateNodes(data, typeOfData) {
-        let outputArray = [];
+        let generatedNodes = [];
         switch (typeOfData) {
             case "user":
                 for (element of data) {
-                    outputArray.push(new userNode(element.name, element.user_id))
+                    generatedNodes.push(new userNode(element.name, element.user_id))
                 }
                 break;
 
             case "project":
                 for (element of data) {
-                    outputArray.push(new projectNode(element.name, element.project_id))
+                    generatedNodes.push(new projectNode(element.name, element.project_id))
                 }
                 break;
 
             case "task":
                 for (element of data) {
-                    outputArray.push(new taskNode(element.name, element.task_id))
+                    generatedNodes.push(new taskNode(element.name, element.task_id))
                 }
                 break;
         }
-        return outputArray;
+        return generatedNodes;
     }
 }
 
-nodeFactory();
+//==================================================
+//----------------Data Diaplay----------------------
+//==================================================
+
+(async function main() {
+    const orgData = await nodeFactory();
+    drawNode(orgData.userNodes[0]);
+
+})();
+
+async function drawNode(node) {
+    switch (node.type) {
+        case "userNode":
+            console.log("Got this far")
+            ctx.beginPath();
+            ctx.lineWidth = 1;
+            ctx.arc(canvasCenter.x, canvasCenter.y, 10, 0, Math.PI * 2, false)
+            ctx.fill();
+
+            break;
+        case node instanceof taskNode:
+
+            break;
+        case node instanceof projectNode:
+
+            break;
+        default:
+            console.log("we hit the default")
+            break;
+    }
+}
+//What are some general purpose methods

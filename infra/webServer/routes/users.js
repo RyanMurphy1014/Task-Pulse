@@ -22,7 +22,6 @@ router.get("/all", async (req, res) => {
         .eq('parent_organization_id', organizationId)
 
     if (!userList.error) {
-        console.log("Sending json to client")
         res.json(userList.data)
     }else{
         console.log("we got problems")
