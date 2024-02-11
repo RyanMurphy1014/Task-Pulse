@@ -4,7 +4,7 @@
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 
-const size = document.getElementById("canvasContainer").offsetHeight
+const size = document.getElementById("canvasContainer").offsetWidth
 canvas.style.width = `${size}px`
 canvas.style.height = `${size}px`
 
@@ -135,6 +135,8 @@ async function nodeFactory() {
 async function drawNode(node) {
     switch (node.type) {
         case "userNode":
+            console.log(canvasCenter.x)
+            ctx.stroke();
             ctx.beginPath();
             ctx.lineWidth = 6;
             ctx.arc(canvasCenter.x, canvasCenter.y, 50, 0, Math.PI * 2, false)
@@ -142,6 +144,7 @@ async function drawNode(node) {
             ctx.font = '18px mono'
             //Need to find way to vertically align text
             ctx.fillText(node.label,canvasCenter.x - 45, canvasCenter.y + 70 ,100)
+
 
             break;
         case node instanceof taskNode:
