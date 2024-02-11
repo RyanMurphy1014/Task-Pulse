@@ -31,6 +31,9 @@ class taskNode {
         this.shape = "square"
         this.label = label;
         this.data = data_id;
+
+        this.originX = canvasCenter.x + 300;
+        this.originY = canvasCenter.y;
     }
 
     toString() {
@@ -44,6 +47,9 @@ class projectNode {
         this.shape = "hexagon"
         this.label = label;
         this.data = data_id;
+
+        this.originX = canvasCenter.x - 300;
+        this.originY = canvasCenter.y;
     }
 
     toString() {
@@ -57,6 +63,10 @@ class userNode {
         this.shape = "circle"
         this.label = label;
         this.data = data_id;
+
+        this.originX = 500;
+        this.originY = 500;
+        this.radius = 50;
     }
 
     toString() {
@@ -137,29 +147,30 @@ async function nodeFactory() {
 async function drawNode(node) {
     switch (node.type) {
         case "userNode":
-            //Temporary offset values TODO delete this value
-            const offset = 200;
+            //Temporary  values TODO delete this value
 
             ctx.stroke();
             ctx.beginPath();
             ctx.lineWidth = 6;
-            ctx.arc(canvasCenter.x + offset, canvasCenter.y + offset, 50, 0, Math.PI * 2, false)
+            ctx.arc(node.originX, node.originY, node.radius, 0, Math.PI * 2, false)
             ctx.stroke();
             ctx.font = '18px mono'
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'center'
             //Need to find way to vertically align text
-            ctx.fillText(node.label, canvasCenter.x - 45 + offset, canvasCenter.y + 70 + offset)
+            ctx.fillText(node.label, node.originX, node.originY + node.radius + 25)
 
 
             break;
         case "taskNode":
-            //Temporary offset
-            const taskOffset = 300;
 
             ctx.lineWidth = 6;
-            ctx.rect(canvasCenter.x - taskOffset, canvasCenter.y - taskOffset, 100, 100)
+            ctx.rect(node.originX, node.originY, 100, 100)
             ctx.stroke();
             ctx.font = '18px mono'
-            ctx.fillText(node.label, canvasCenter.x - 55 - taskOffset, canvasCenter.y + 125 - taskOffset)
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'center'
+            ctx.fillText(node.label, node.originX + 50, node.originY + 125)
             ctx.stroke();
             break;
 
@@ -171,8 +182,8 @@ async function drawNode(node) {
             const points = [];
             for (let i = 0; i < 6; i++) {
                 const angle = angleStep * i;
-                const x = canvasCenter.x + nodeSize * Math.cos(angle);
-                const y = canvasCenter.y + nodeSize * Math.sin(angle);
+                const x = node.originX + nodeSize * Math.cos(angle);
+                const y = node.originY + nodeSize * Math.sin(angle);
                 points.push({ x, y });
             }
 
@@ -186,7 +197,9 @@ async function drawNode(node) {
             ctx.stroke();
 
             ctx.font = '18px mono'
-            ctx.fillText(node.label, canvasCenter.x - 85, canvasCenter.y + nodeSize + 10)
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'center'
+            ctx.fillText(node.label, node.originX, node.originY + nodeSize + 15)
             ctx.stroke();
             break;
         default:
