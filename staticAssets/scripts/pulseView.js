@@ -129,28 +129,37 @@ async function nodeFactory() {
 (async function main() {
     const orgData = await nodeFactory();
     drawNode(orgData.userNodes[0]);
+    drawNode(orgData.taskNodes[0])
 
 })();
 
 async function drawNode(node) {
     switch (node.type) {
         case "userNode":
-            console.log(canvasCenter.x)
+            //Temporary offset values TODO delete this value
+            const offset = 200;
+
             ctx.stroke();
             ctx.beginPath();
             ctx.lineWidth = 6;
-            ctx.arc(canvasCenter.x, canvasCenter.y, 50, 0, Math.PI * 2, false)
+            ctx.arc(canvasCenter.x + offset, canvasCenter.y + offset, 50, 0, Math.PI * 2, false)
             ctx.stroke();
             ctx.font = '18px mono'
             //Need to find way to vertically align text
-            ctx.fillText(node.label,canvasCenter.x - 45, canvasCenter.y + 70 ,100)
+            ctx.fillText(node.label, canvasCenter.x - 45 + offset, canvasCenter.y + 70 + offset)
 
 
             break;
-        case node instanceof taskNode:
+        case "taskNode":
+            ctx.lineWidth = 6;
+            ctx.rect(canvasCenter.x, canvasCenter.y, 100, 100)
+            ctx.stroke();
+            ctx.font = '18px mono'
+            ctx.fillText(node.label, canvasCenter.x - 55, canvasCenter.y + 125)
+            ctx.stroke();
 
             break;
-        case node instanceof projectNode:
+        case "projectNode":
 
             break;
         default:
@@ -158,4 +167,3 @@ async function drawNode(node) {
             break;
     }
 }
-//What are some general purpose methods
