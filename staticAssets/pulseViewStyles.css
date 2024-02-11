@@ -79,6 +79,9 @@ main{
     grid-area: main;
     background-color: var(--background);
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 canvas{

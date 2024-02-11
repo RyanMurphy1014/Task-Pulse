@@ -2,6 +2,17 @@
 //------------------Initialization------------------
 //==================================================
 let canvas = document.createElement("canvas");
+let ctx = canvas.getContext("2d");
+
+const size = document.getElementById("canvasContainer").offsetHeight
+canvas.style.width = `${size}px`
+canvas.style.height = `${size}px`
+
+const scale = window.devicePixelRatio
+canvas.width = Math.floor(size * scale)
+canvas.height = Math.floor(size * scale)
+
+ctx.scale(scale, scale)
 
 let canvasCenter = {
     x: canvas.width / 2,
@@ -10,7 +21,6 @@ let canvasCenter = {
 
 document.getElementById("canvasContainer").append(canvas);
 
-let ctx = canvas.getContext("2d");
 
 //==================================================
 //---------------------Classes------------------------
@@ -125,11 +135,13 @@ async function nodeFactory() {
 async function drawNode(node) {
     switch (node.type) {
         case "userNode":
-            console.log("Got this far")
             ctx.beginPath();
-            ctx.lineWidth = 1;
-            ctx.arc(canvasCenter.x, canvasCenter.y, 10, 0, Math.PI * 2, false)
-            ctx.fill();
+            ctx.lineWidth = 6;
+            ctx.arc(canvasCenter.x, canvasCenter.y, 50, 0, Math.PI * 2, false)
+            ctx.stroke();
+            ctx.font = '18px mono'
+            //Need to find way to vertically align text
+            ctx.fillText(node.label,canvasCenter.x - 45, canvasCenter.y + 70 ,100)
 
             break;
         case node instanceof taskNode:
