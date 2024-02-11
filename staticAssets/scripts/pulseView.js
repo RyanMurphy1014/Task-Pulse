@@ -130,6 +130,7 @@ async function nodeFactory() {
     const orgData = await nodeFactory();
     drawNode(orgData.userNodes[0]);
     drawNode(orgData.taskNodes[0])
+    drawNode(orgData.projectNodes[0])
 
 })();
 
@@ -151,16 +152,42 @@ async function drawNode(node) {
 
             break;
         case "taskNode":
+            //Temporary offset
+            const taskOffset = 300;
+
             ctx.lineWidth = 6;
-            ctx.rect(canvasCenter.x, canvasCenter.y, 100, 100)
+            ctx.rect(canvasCenter.x - taskOffset, canvasCenter.y - taskOffset, 100, 100)
             ctx.stroke();
             ctx.font = '18px mono'
-            ctx.fillText(node.label, canvasCenter.x - 55, canvasCenter.y + 125)
+            ctx.fillText(node.label, canvasCenter.x - 55 - taskOffset, canvasCenter.y + 125 - taskOffset)
+            ctx.stroke();
+            break;
+
+        case "projectNode":
+            const nodeSize = 75;
+
+            // Calculate the coordinates of the hexagon vertices
+            const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
+            const points = [];
+            for (let i = 0; i < 6; i++) {
+                const angle = angleStep * i;
+                const x = canvasCenter.x + nodeSize * Math.cos(angle);
+                const y = canvasCenter.y + nodeSize * Math.sin(angle);
+                points.push({ x, y });
+            }
+
+            // Draw the hexagon
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.closePath();
             ctx.stroke();
 
-            break;
-        case "projectNode":
-
+            ctx.font = '18px mono'
+            ctx.fillText(node.label, canvasCenter.x - 85, canvasCenter.y + nodeSize + 10)
+            ctx.stroke();
             break;
         default:
             console.log("we hit the default")
