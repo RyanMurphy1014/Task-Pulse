@@ -52,39 +52,56 @@ class userNode {
 //---------------------LOGIC------------------------
 //==================================================
 
+async function nodeFactory() {
+    const orgData = await aggregateData();
 
+    const userNodes = await generateNodes(orgData.users, "user")
+    const projectNodes = await generateNodes(orgData.projects, "project")
+    const taskNodes = await generateNodes(orgData.tasks, "task")
 
-async function getUsers() {
-    const users = await fetch("/users/all")
-    return await users.json();
-}
-
-async function getTasks() {
-    const tasks = await fetch("/tasks/all")
-    const taskDataJson = await tasks.json();
-    return taskDataJson;
-}
-
-async function getProjects() {
-    const projects = await fetch("/projects/all");
-    const projectsDataJson = await projects.json();
-    return projectsDataJson;
-}
-
-async function aggregateData(){
-    const users = await getUsers();
-    const tasks = await getTasks();
-    const projects = await getProjects();
-
-    const orgData = {
-        users: users,
-        tasks: tasks,
-        projects: projects,
+    const orgNodes = {
+        userNodes: userNodes,
+        projectNodes: projectNodes,
+        taskNodes: taskNodes,
     }
-    return orgData;
+    return orgNodes
+
+    async function aggregateData() {
+        const users = await fetch("/users/all")
+        const tasks = await fetch("/tasks/all")
+        const projects = await fetch("/projects/all");
+
+        const orgData = {
+            users: await users.json(),
+            tasks: await tasks.json(),
+            projects: await projects.json(),
+        }
+        return orgData;
+    }
+
+    async function generateNodes(data, typeOfData) {
+        let outputArray = [];
+        switch (typeOfData) {
+            case "user":
+                for (element of data) {
+                    outputArray.push(new userNode(element.name, element.user_id))
+                }
+                break;
+
+            case "project":
+                for (element of data) {
+                    outputArray.push(new projectNode(element.name, element.project_id))
+                }
+                break;
+
+            case "task":
+                for (element of data) {
+                    outputArray.push(new taskNode(element.name, element.task_id))
+                }
+                break;
+        }
+        return outputArray;
+    }
 }
 
-async function displayOrgData(){
-    console.log(await aggregateData())
-}
-
+nodeFactory();
