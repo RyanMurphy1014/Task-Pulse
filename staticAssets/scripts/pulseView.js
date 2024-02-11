@@ -1,5 +1,5 @@
 //==================================================
-//---------------------Constants------------------------
+//------------------Initialization------------------
 //==================================================
 let canvas = document.createElement("canvas");
 document.getElementById("canvasContainer").append(canvas);
@@ -56,9 +56,35 @@ class userNode {
 
 async function getUsers() {
     const users = await fetch("/users/all")
-    console.log(await users.json())
-    return users;
+    return await users.json();
 }
 
-getUsers()
+async function getTasks() {
+    const tasks = await fetch("/tasks/all")
+    const taskDataJson = await tasks.json();
+    return taskDataJson;
+}
+
+async function getProjects() {
+    const projects = await fetch("/projects/all");
+    const projectsDataJson = await projects.json();
+    return projectsDataJson;
+}
+
+async function aggregateData(){
+    const users = await getUsers();
+    const tasks = await getTasks();
+    const projects = await getProjects();
+
+    const orgData = {
+        users: users,
+        tasks: tasks,
+        projects: projects,
+    }
+    return orgData;
+}
+
+async function displayOrgData(){
+    console.log(await aggregateData())
+}
 
