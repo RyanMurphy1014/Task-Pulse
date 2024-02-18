@@ -1,5 +1,7 @@
 //==================================================
 //------------------Initialization------------------
+
+
 //==================================================
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
@@ -138,11 +140,52 @@ async function nodeFactory() {
 
 (async function main() {
     const orgData = await nodeFactory();
-    drawNode(orgData.userNodes[0]);
-    drawNode(orgData.taskNodes[0])
-    drawNode(orgData.projectNodes[0])
+    console.log(orgData)
+    const nodeLayerCoordinates = getNodeCoordinateObject(100, orgData)
+    console.log(nodeLayerCoordinates)
 
-})();
+
+})();//IIFE
+
+//returns a coordinate object holding a field for each type of node with correpsonding coordinates based on unit square
+function getNodeCoordinateObject(outerRadius, orgData) {
+    //For Fine tuning
+    const taskLayerSizeRatio = 0.33;
+    const projectLayerSizeRatio = 0.1;
+
+    //output
+    let nodeCoordinateObject = {
+        projectLayerCoordinates: generateCoordinateObject(orgData.projectNodes, outerRadius * projectLayerSizeRatio),
+        taskLayerCoordinates: generateCoordinateObject(orgData.taskNodes, outerRadius * taskLayerSizeRatio),
+        userLayerCoordinates: generateCoordinateObject(orgData.userNodes, outerRadius),
+    }
+    return nodeCoordinateObject;
+
+    function generateCoordinateObject(nodeList, radius) {
+        let nodeCoordinates = {
+            coordinates: calculateTangentialCoordinates(radius, nodeList),
+            radius: radius,
+        };
+
+        return nodeCoordinates
+
+        function calculateTangentialCoordinates(radius, nodes) {
+            const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
+            const coordinates = [];
+
+            for (let i = 0; i < nodes.length; i++) {
+                const angle = angleStep * i; // Calculate angle for current object
+                const x = radius * Math.cos(angle); // Calculate x coordinate
+                const y = radius * Math.sin(angle); // Calculate y coordinate
+                coordinates.push({ x, y }); // Push coordinates to array
+            }
+
+            return coordinates;
+        }
+    }
+
+}
+
 
 async function drawNode(node) {
     switch (node.type) {
@@ -199,8 +242,8 @@ async function drawNode(node) {
             ctx.font = '18px mono'
             ctx.textAlign = 'center';
             ctx.textBaseline = 'center'
-            ctx.fillText(node.label, node.originX, node.originY + nodeSize + 15)
-            ctx.stroke();
+            ctx.fillText(node.label, node.originX, node.originY + nodeSize + 15) //Node size is added to push label
+            ctx.stroke();                                                        //Below shape
             break;
         default:
             console.log("we hit the default")
