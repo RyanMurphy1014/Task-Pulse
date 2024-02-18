@@ -1,7 +1,5 @@
 //==================================================
 //------------------Initialization------------------
-
-
 //==================================================
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
@@ -61,8 +59,6 @@ class userNode {
         this.shape = "circle"
         this.label = label;
         this.data = data_id;
-
-        this.radius = 50;
     }
 
     toString() {
@@ -141,8 +137,8 @@ async function nodeFactory() {
 })();//IIFE
 
 function getNodeCoordinateObject(outerRadius, orgData) {
-    //For Fine tuning
-    const taskLayerSizeRatio = 0.33;
+    //Adjustment
+    const taskLayerSizeRatio = 0.45;
     const projectLayerSizeRatio = 0.1;
 
     //output
@@ -171,7 +167,7 @@ function getNodeCoordinateObject(outerRadius, orgData) {
                 let y = radius * Math.sin(angle); // Calculate y coordinate
                 x += canvasCenter.x;
                 y += canvasCenter.y;
-                coordinates.push({ x , y }); // Push coordinates to array
+                coordinates.push({ x, y }); // Push coordinates to array
             }
 
             return coordinates;
@@ -183,45 +179,49 @@ function getNodeCoordinateObject(outerRadius, orgData) {
 
 function drawNodeLayer(nodeList, coordinateObject) {
     for (let i = 0; i < nodeList.length; i++) {
-        console.log(coordinateObject)
         switch (nodeList[i].type) {
             case "userNode":
+
+                //Adjustment
+                const userNodeSize = 35;
 
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.lineWidth = 6;
-                ctx.arc(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, nodeList[i].radius, 0, Math.PI * 2, false)
+                ctx.arc(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, userNodeSize, 0, Math.PI * 2, false)
                 ctx.stroke();
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
                 //Need to find way to vertically align text
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + nodeList[i].radius + 25)
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + userNodeSize + 25)
 
 
                 break;
             case "taskNode":
+                //Adjustment
+                const taskNodeSize = 60;
 
                 ctx.lineWidth = 6;
-                ctx.rect(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, 100, 100)
+                ctx.rect(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, taskNodeSize, taskNodeSize)
                 ctx.stroke();
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x + 50, coordinateObject.coordinates[i].y + 125)
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x + 50, coordinateObject.coordinates[i].y + (taskNodeSize + 25))
                 ctx.stroke();
                 break;
 
             case "projectNode":
-                const nodeSize = 75;
-
+                //Adjustment
+                const projectNodeSize = 50;
                 // Calculate the coordinates of the hexagon vertices
                 const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
                 const points = [];
                 for (let j = 0; j < 6; j++) {
                     const angle = angleStep * j;
-                    const x = coordinateObject.coordinates[i].x + nodeSize * Math.cos(angle);
-                    const y = coordinateObject.coordinates[i].y + nodeSize * Math.sin(angle);
+                    const x = coordinateObject.coordinates[i].x + projectNodeSize * Math.cos(angle);
+                    const y = coordinateObject.coordinates[i].y + projectNodeSize * Math.sin(angle);
                     points.push({ x, y });
                 }
 
@@ -237,7 +237,7 @@ function drawNodeLayer(nodeList, coordinateObject) {
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + nodeSize + 15) //Node size is added to push label
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + projectNodeSize + 15) //Node size is added to push label
                 ctx.stroke();                                                        //Below shape
                 break;
             default:
