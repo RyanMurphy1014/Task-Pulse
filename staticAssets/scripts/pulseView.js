@@ -34,8 +34,6 @@ class taskNode {
         this.label = label;
         this.data = data_id;
 
-        this.originX = canvasCenter.x + 300;
-        this.originY = canvasCenter.y;
     }
 
     toString() {
@@ -50,8 +48,6 @@ class projectNode {
         this.label = label;
         this.data = data_id;
 
-        this.originX = canvasCenter.x - 300;
-        this.originY = canvasCenter.y;
     }
 
     toString() {
@@ -66,8 +62,6 @@ class userNode {
         this.label = label;
         this.data = data_id;
 
-        this.originX = 500;
-        this.originY = 500;
         this.radius = 50;
     }
 
@@ -83,16 +77,12 @@ class userNode {
 async function nodeFactory() {
     const orgData = await aggregateData();
 
-    const userNodes = await generateNodes(orgData.users, "user")
-    const projectNodes = await generateNodes(orgData.projects, "project")
-    const taskNodes = await generateNodes(orgData.tasks, "task")
+    const userNodes = await generateNodes(orgData.users, "userNode")
+    const projectNodes = await generateNodes(orgData.projects, "projectNode")
+    const taskNodes = await generateNodes(orgData.tasks, "taskNode")
 
     //Gathers processed data into an output object
-    const orgNodes = {
-        userNodes: userNodes,
-        projectNodes: projectNodes,
-        taskNodes: taskNodes,
-    }
+    const orgNodes = { userNodes, projectNodes, taskNodes }
     return orgNodes
 
     //Helper functions
@@ -112,23 +102,25 @@ async function nodeFactory() {
     async function generateNodes(data, typeOfData) {
         let generatedNodes = [];
         switch (typeOfData) {
-            case "user":
+            case "userNode":
                 for (element of data) {
                     generatedNodes.push(new userNode(element.name, element.user_id))
                 }
                 break;
 
-            case "project":
+            case "projectNode":
                 for (element of data) {
                     generatedNodes.push(new projectNode(element.name, element.project_id))
                 }
                 break;
 
-            case "task":
+            case "taskNode":
                 for (element of data) {
                     generatedNodes.push(new taskNode(element.name, element.task_id))
                 }
                 break;
+            default:
+                console.log("Hitting the default on 124")
         }
         return generatedNodes;
     }
@@ -140,14 +132,14 @@ async function nodeFactory() {
 
 (async function main() {
     const orgData = await nodeFactory();
-    console.log(orgData)
-    const nodeLayerCoordinates = getNodeCoordinateObject(100, orgData)
-    console.log(nodeLayerCoordinates)
+    const nodeLayerCoordinates = getNodeCoordinateObject(800, orgData)
+    drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
+    drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
+    drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
 
 
 })();//IIFE
 
-//returns a coordinate object holding a field for each type of node with correpsonding coordinates based on unit square
 function getNodeCoordinateObject(outerRadius, orgData) {
     //For Fine tuning
     const taskLayerSizeRatio = 0.33;
@@ -187,66 +179,70 @@ function getNodeCoordinateObject(outerRadius, orgData) {
 }
 
 
-async function drawNode(node) {
-    switch (node.type) {
-        case "userNode":
-            //Temporary  values TODO delete this value
+function drawNodeLayer(nodeList, coordinateObject) {
+    for (let i = 0; i < nodeList.length; i++) {
+        console.log(coordinateObject)
+        switch (nodeList[i].type) {
+            case "userNode":
 
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.lineWidth = 6;
-            ctx.arc(node.originX, node.originY, node.radius, 0, Math.PI * 2, false)
-            ctx.stroke();
-            ctx.font = '18px mono'
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'center'
-            //Need to find way to vertically align text
-            ctx.fillText(node.label, node.originX, node.originY + node.radius + 25)
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.lineWidth = 6;
+                ctx.arc(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, nodeList[i].radius, 0, Math.PI * 2, false)
+                ctx.stroke();
+                ctx.font = '18px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                //Need to find way to vertically align text
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + nodeList[i].radius + 25)
 
 
-            break;
-        case "taskNode":
+                break;
+            case "taskNode":
 
-            ctx.lineWidth = 6;
-            ctx.rect(node.originX, node.originY, 100, 100)
-            ctx.stroke();
-            ctx.font = '18px mono'
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'center'
-            ctx.fillText(node.label, node.originX + 50, node.originY + 125)
-            ctx.stroke();
-            break;
+                ctx.lineWidth = 6;
+                ctx.rect(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, 100, 100)
+                ctx.stroke();
+                ctx.font = '18px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x + 50, coordinateObject.coordinates[i].y + 125)
+                ctx.stroke();
+                break;
 
-        case "projectNode":
-            const nodeSize = 75;
+            case "projectNode":
+                const nodeSize = 75;
 
-            // Calculate the coordinates of the hexagon vertices
-            const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
-            const points = [];
-            for (let i = 0; i < 6; i++) {
-                const angle = angleStep * i;
-                const x = node.originX + nodeSize * Math.cos(angle);
-                const y = node.originY + nodeSize * Math.sin(angle);
-                points.push({ x, y });
-            }
+                // Calculate the coordinates of the hexagon vertices
+                const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
+                const points = [];
+                for (let j = 0; j < 6; j++) {
+                    const angle = angleStep * j;
+                    const x = coordinateObject.coordinates[i].x + nodeSize * Math.cos(angle);
+                    const y = coordinateObject.coordinates[i].y + nodeSize * Math.sin(angle);
+                    points.push({ x, y });
+                }
 
-            // Draw the hexagon
-            ctx.beginPath();
-            ctx.moveTo(points[0].x, points[0].y);
-            for (let i = 1; i < points.length; i++) {
-                ctx.lineTo(points[i].x, points[i].y);
-            }
-            ctx.closePath();
-            ctx.stroke();
+                // Draw the hexagon
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+                ctx.closePath();
+                ctx.stroke();
 
-            ctx.font = '18px mono'
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'center'
-            ctx.fillText(node.label, node.originX, node.originY + nodeSize + 15) //Node size is added to push label
-            ctx.stroke();                                                        //Below shape
-            break;
-        default:
-            console.log("we hit the default")
-            break;
+                ctx.font = '18px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + nodeSize + 15) //Node size is added to push label
+                ctx.stroke();                                                        //Below shape
+                break;
+            default:
+                console.log("we hit the default - switch checks node type")
+                break;
+        }
+
+
     }
 }
