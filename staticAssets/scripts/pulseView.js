@@ -132,7 +132,7 @@ async function nodeFactory() {
 
 (async function main() {
     const orgData = await nodeFactory();
-    const nodeLayerCoordinates = getNodeCoordinateObject(800, orgData)
+    const nodeLayerCoordinates = getNodeCoordinateObject(350, orgData)
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
@@ -167,9 +167,11 @@ function getNodeCoordinateObject(outerRadius, orgData) {
 
             for (let i = 0; i < nodes.length; i++) {
                 const angle = angleStep * i; // Calculate angle for current object
-                const x = radius * Math.cos(angle); // Calculate x coordinate
-                const y = radius * Math.sin(angle); // Calculate y coordinate
-                coordinates.push({ x, y }); // Push coordinates to array
+                let x = radius * Math.cos(angle); // Calculate x coordinate
+                let y = radius * Math.sin(angle); // Calculate y coordinate
+                x += canvasCenter.x;
+                y += canvasCenter.y;
+                coordinates.push({ x , y }); // Push coordinates to array
             }
 
             return coordinates;
