@@ -129,59 +129,49 @@ async function nodeFactory() {
 
 (async function main() {
     const orgData = await nodeFactory();
-    const nodeLayerCoordinates = getNodeCoordinateObject(315, orgData) //Adjustment
-    console.log(nodeLayerCoordinates.taskLayerCoordinates)
+    const nodeLayerCoordinates = getNodeCoordinateObject(315, orgData) //Adjustment Radius
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
-    // ctx.fillStyle = "red"
+    // ctx.fillStyle = "red" //Shows canvas center
     // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
 
 
 })();//IIFE
 
 function getNodeCoordinateObject(outerRadius, orgData) {
-    //Adjustment
+    //Adjustment - Percent of outer radius
     const taskLayerSizeRatio = 0.45;
     const projectLayerSizeRatio = 0.1;
 
-    //output
     let nodeCoordinateObject = {
-        projectLayerCoordinates: generateCoordinateObject(orgData.projectNodes, outerRadius * projectLayerSizeRatio),
-        taskLayerCoordinates: generateCoordinateObject(orgData.taskNodes, outerRadius * taskLayerSizeRatio),
-        userLayerCoordinates: generateCoordinateObject(orgData.userNodes, outerRadius),
+        projectLayerCoordinates: calculateTangentialCoordinates(outerRadius * projectLayerSizeRatio, orgData.projectNodes),
+        taskLayerCoordinates: calculateTangentialCoordinates(outerRadius * taskLayerSizeRatio, orgData.taskNodes),
+        userLayerCoordinates: calculateTangentialCoordinates(outerRadius, orgData.userNodes),
+        
     }
     return nodeCoordinateObject;
 
-    function generateCoordinateObject(nodeList, radius) {
-        let nodeCoordinates = {
-            coordinates: calculateTangentialCoordinates(radius, nodeList),
-            radius: radius,
-        };
+    function calculateTangentialCoordinates(radius, nodes) {
+        const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
+        const coordinates = [];
 
-        return nodeCoordinates
-
-        function calculateTangentialCoordinates(radius, nodes) {
-            const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
-            const coordinates = [];
-
-            for (let i = 0; i < nodes.length; i++) {
-                const angle = angleStep * i; // Calculate angle for current object
-                let x = radius * Math.cos(angle); // Calculate x coordinate
-                let y = radius * Math.sin(angle); // Calculate y coordinate
-                x += canvasCenter.x;
-                y += canvasCenter.y;
-                coordinates.push({ x, y }); // Push coordinates to array
-            }
-
-            return coordinates;
+        for (let i = 0; i < nodes.length; i++) {
+            const angle = angleStep * i;
+            let x = radius * Math.cos(angle);
+            let y = radius * Math.sin(angle);
+            x += canvasCenter.x;
+            y += canvasCenter.y;
+            coordinates.push({ x, y }); // Push coordinates to array
         }
+        return coordinates;
     }
+    
 
 }
 
 
-function drawNodeLayer(nodeList, coordinateObject) {
+function drawNodeLayer(nodeList, coordinateList) {
     for (let i = 0; i < nodeList.length; i++) {
         switch (nodeList[i].type) {
             case "userNode":
@@ -192,13 +182,13 @@ function drawNodeLayer(nodeList, coordinateObject) {
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.lineWidth = 6;
-                ctx.arc(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, userNodeSize, 0, Math.PI * 2, false)
+                ctx.arc(coordinateList[i].x, coordinateList[i].y, userNodeSize, 0, Math.PI * 2, false)
                 ctx.stroke();
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
                 //Need to find way to vertically align text
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + userNodeSize + 25)
+                ctx.fillText(nodeList[i].label, coordinateList[i].x, coordinateList[i].y + userNodeSize + 25)
 
 
                 break;
@@ -207,12 +197,12 @@ function drawNodeLayer(nodeList, coordinateObject) {
                 const taskNodeSize = 60;
 
                 ctx.lineWidth = 6;
-                ctx.rect(coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y, taskNodeSize, taskNodeSize)
+                ctx.rect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
                 ctx.stroke();
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x + 50, coordinateObject.coordinates[i].y + (taskNodeSize + 25))
+                ctx.fillText(nodeList[i].label, coordinateList[i].x + 50, coordinateList[i].y + (taskNodeSize + 25))
                 ctx.stroke();
                 break;
 
@@ -224,8 +214,8 @@ function drawNodeLayer(nodeList, coordinateObject) {
                 const points = [];
                 for (let j = 0; j < 6; j++) {
                     const angle = angleStep * j;
-                    const x = coordinateObject.coordinates[i].x + projectNodeSize * Math.cos(angle);
-                    const y = coordinateObject.coordinates[i].y + projectNodeSize * Math.sin(angle);
+                    const x = coordinateList[i].x + projectNodeSize * Math.cos(angle);
+                    const y = coordinateList[i].y + projectNodeSize * Math.sin(angle);
                     points.push({ x, y });
                 }
 
@@ -241,7 +231,7 @@ function drawNodeLayer(nodeList, coordinateObject) {
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateObject.coordinates[i].x, coordinateObject.coordinates[i].y + projectNodeSize + 15) //Node size is added to push label
+                ctx.fillText(nodeList[i].label, coordinateList[i].x, coordinateList[i].y + projectNodeSize + 15) //Node size is added to push label
                 ctx.stroke();                                                        //Below shape
                 break;
             default:
