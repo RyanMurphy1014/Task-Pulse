@@ -4,15 +4,16 @@
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 
-const size = document.getElementById("canvasContainer").offsetWidth
-canvas.style.width = `${size}px`
-canvas.style.height = `${size}px`
+const widthSize = document.getElementById("canvasContainer").offsetWidth
+const heightSize = document.getElementById("canvasContainer").offsetHeight
+canvas.style.width = `${widthSize}px`
+canvas.style.height = `${heightSize}px`
 
 const scale = window.devicePixelRatio
-canvas.width = Math.floor(size * scale)
-canvas.height = Math.floor(size * scale)
+canvas.width = Math.floor(widthSize * scale)
+canvas.height = Math.floor(heightSize * scale)
 
-ctx.scale(scale, scale)
+
 
 let canvasCenter = {
     x: canvas.width / 2,
@@ -128,10 +129,13 @@ async function nodeFactory() {
 
 (async function main() {
     const orgData = await nodeFactory();
-    const nodeLayerCoordinates = getNodeCoordinateObject(350, orgData)
+    const nodeLayerCoordinates = getNodeCoordinateObject(315, orgData) //Adjustment
+    console.log(nodeLayerCoordinates.taskLayerCoordinates)
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
+    // ctx.fillStyle = "red"
+    // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
 
 
 })();//IIFE

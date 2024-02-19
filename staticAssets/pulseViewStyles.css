@@ -1,4 +1,4 @@
-:root{
+:root {
 
     --text: #000000;
     --background: #22262a;
@@ -6,32 +6,33 @@
     --secondary: #2c3136;
     --accent: #087761;
 }
-html{
+
+html {
     background-color: var(--background);
 }
 
-#pulseView{
+#pulseView {
     background-color: #043d32;
 }
 
-#pulseViewSection{
+#pulseViewSection {
     background-color: #043d32;
 }
 
-a{
+a {
     text-decoration: none;
     color: var(--text);
     text-align: center;
 }
 
-body{
+body {
     display: grid;
     width: 100vw;
     height: 100vh;
     margin: 0;
     padding: 0;
 
-    grid-template-areas: 
+    grid-template-areas:
         "nav head head"
         "nav main main"
         "nav main main";
@@ -41,33 +42,33 @@ body{
 }
 
 
-#taskPulseLogo{
+#taskPulseLogo {
     width: 100%;
     height: 4.5rem;
 }
 
-hr{
+hr {
     border-color: black;
 }
 
-nav{
+nav {
     grid-area: nav;
     grid-auto-flow: column;
     background-color: var(--secondary);
     align-items: center;
 }
 
-nav > div {
+nav>div {
     text-align: center;
 }
 
-section{
+section {
     margin: 2rem;
     display: block;
     background-color: var(--accent);
 }
 
-section > a {
+section>a {
     background-color: var(--accent);
     font-size: 1.25rem;
     word-wrap: normal;
@@ -75,41 +76,34 @@ section > a {
 }
 
 
-main{
+main {
     grid-area: main;
     background-color: var(--background);
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
-canvas{
-    width: 100%;
-    height: 100%;
-}
 
-#currentPage{
+#currentPage {
     background-color: whitesmoke;
 }
 
-#notifications{
+#notifications {
     background-color: whitesmoke;
 }
 
-#profile{
+
+#profile {
     background-color: whitesmoke;
 }
 
-header > span {
+header>span {
     padding: 1rem;
     margin: 1rem;
     text-align: center;
     border-radius: 0.25rem;
 }
 
-
-header{
+header {
     grid-area: head;
     background-color: var(--accent);
     display: flex;
