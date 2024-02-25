@@ -9,27 +9,60 @@ const heightSize = document.getElementById("canvasContainer").offsetHeight
 canvas.style.width = `${widthSize}px`
 canvas.style.height = `${heightSize}px`
 
-let scaleModifier = 1.8;
-setScale(scaleModifier);
 
-function setScale(modifier) {
-    const scale = window.devicePixelRatio * modifier
-    canvas.width = Math.floor(widthSize * scale)
-    canvas.height = Math.floor(heightSize * scale)
-}
+const scale = window.devicePixelRatio * 1.4; //Magic number to make scaling correct on my display
+canvas.width = Math.floor(widthSize * scale)
+canvas.height = Math.floor(heightSize * scale)
 
 let canvasCenter = {
     x: canvas.width / 2,
     y: canvas.height / 2,
 }
 
+//Variables for panning
+let isPanning = false;
+let startPanX;
+let startPanY;
+let translateX = 0;
+let translateY = 0;
+
+canvas.addEventListener('mousedown', (event) => {
+    isPanning = true;
+    startPanX = event.clientX;
+    startPanY = event.clientY;
+    canvas.style.cursor = "grabbing";
+
+})
+
+canvas.addEventListener('mousemove', (event) => {
+    if (isPanning) {
+        let dX = event.clientX - startPanX;
+        let dY = event.clientY - startPanY;
+        canvasCenter.x += dX;
+        canvasCenter.y += dY;
+        startPanX = event.clientX;
+        startPanY = event.clientY;
+        clearCanvas();
+        draw();
+    }
+})
+
+canvas.addEventListener('mouseup', event => {
+    isPanning = false;
+    canvas.style.cursor = 'grab';
+})
+
+canvas.addEventListener('mouseleave', event => {
+    isPanning = false;
+    canvas.style.cursor = 'grab';
+})
+
 canvas.addEventListener('wheel', (event) => {
     clearCanvas();
-    console.log(scaleModifier)
-    if (event.deltaY > 0) {
-        bigRadius += 25;
+    if (event.deltaY < 0) {
+        bigRadius += 45;
     } else {
-        bigRadius -= 25;
+        bigRadius -= 45;
     }
     draw();
 })
@@ -152,12 +185,13 @@ let bigRadius = getRadius();
 })();//IIFE
 
 function draw() {
+    console.log(`Canvas Center X: ${canvasCenter.x} - Canvas Center Y: ${canvasCenter.y}`)
     const nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgData) //Adjustment Radius
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
 }
-function clearCanvas(){
+function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
 }
