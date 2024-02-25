@@ -24,16 +24,12 @@ let canvasCenter = {
 }
 
 canvas.addEventListener('wheel', (event) => {
+    clearCanvas();
     console.log(scaleModifier)
     if (event.deltaY > 0) {
-        scaleModifier += 0.5
+        bigRadius += 25;
     } else {
-        scaleModifier -= 0.5
-    }
-    setScale(scaleModifier)
-    canvasCenter = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
+        bigRadius -= 25;
     }
     draw();
 })
@@ -146,6 +142,7 @@ async function nodeFactory() {
 //==================================================
 
 let orgData;
+let bigRadius = getRadius();
 (async function main() {
     orgData = await nodeFactory();
     // ctx.fillStyle = "red" //Shows canvas center
@@ -155,10 +152,14 @@ let orgData;
 })();//IIFE
 
 function draw() {
-    const nodeLayerCoordinates = getNodeCoordinateObject(getRadius(), orgData) //Adjustment Radius
+    const nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgData) //Adjustment Radius
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
+}
+function clearCanvas(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
 }
 
 function getRadius() {
