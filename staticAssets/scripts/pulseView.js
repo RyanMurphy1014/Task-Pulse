@@ -25,21 +25,29 @@ let startPanX;
 let startPanY;
 let translateX = 0;
 let translateY = 0;
+var velocityX = 0;
+var velocityY = 0;
+var friction = 0.85;
 
 canvas.addEventListener('mousedown', (event) => {
     isPanning = true;
     startPanX = event.clientX;
     startPanY = event.clientY;
+    velocityX = 0;
+    velocityY = 0;
     canvas.style.cursor = "grabbing";
 
 })
 
 canvas.addEventListener('mousemove', (event) => {
+    console.log(velocityX, velocityY)
     if (isPanning) {
         let dX = event.clientX - startPanX;
         let dY = event.clientY - startPanY;
         canvasCenter.x += dX;
         canvasCenter.y += dY;
+        velocityX = dX;
+        velocityY = dY;
         startPanX = event.clientX;
         startPanY = event.clientY;
         clearCanvas();
@@ -47,14 +55,16 @@ canvas.addEventListener('mousemove', (event) => {
     }
 })
 
-canvas.addEventListener('mouseup', event => {
+canvas.addEventListener('mouseup', () => {
     isPanning = false;
     canvas.style.cursor = 'grab';
+    startInertia();
 })
 
-canvas.addEventListener('mouseleave', event => {
+canvas.addEventListener('mouseleave', () => {
     isPanning = false;
     canvas.style.cursor = 'grab';
+    startInertia();
 })
 
 canvas.addEventListener('wheel', (event) => {
@@ -66,6 +76,20 @@ canvas.addEventListener('wheel', (event) => {
     }
     draw();
 })
+function startInertia() {
+    console.log("inertia")
+    var inertiaInterval = setInterval(function() {
+        velocityX *= friction;
+        velocityY *= friction;
+        canvasCenter.x += velocityX;
+        canvasCenter.y += velocityY;
+        clearCanvas();
+        draw();
+        if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) {
+            clearInterval(inertiaInterval);
+        }
+    }, 16); // Update every 16ms (about 60fps)
+}
 
 document.getElementById("canvasContainer").append(canvas);
 
@@ -164,7 +188,7 @@ async function nodeFactory() {
                 }
                 break;
             default:
-                console.log("Hitting the default on 124")
+                console.log("Hitting the default")
         }
         return generatedNodes;
     }
@@ -185,7 +209,6 @@ let bigRadius = getRadius();
 })();//IIFE
 
 function draw() {
-    console.log(`Canvas Center X: ${canvasCenter.x} - Canvas Center Y: ${canvasCenter.y}`)
     const nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgData) //Adjustment Radius
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
