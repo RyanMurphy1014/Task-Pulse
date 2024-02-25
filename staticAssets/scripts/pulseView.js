@@ -9,16 +9,34 @@ const heightSize = document.getElementById("canvasContainer").offsetHeight
 canvas.style.width = `${widthSize}px`
 canvas.style.height = `${heightSize}px`
 
-const scale = window.devicePixelRatio
-canvas.width = Math.floor(widthSize * scale)
-canvas.height = Math.floor(heightSize * scale)
+let scaleModifier = 1.8;
+setScale(scaleModifier);
 
-
+function setScale(modifier) {
+    const scale = window.devicePixelRatio * modifier
+    canvas.width = Math.floor(widthSize * scale)
+    canvas.height = Math.floor(heightSize * scale)
+}
 
 let canvasCenter = {
     x: canvas.width / 2,
     y: canvas.height / 2,
 }
+
+canvas.addEventListener('wheel', (event) => {
+    console.log(scaleModifier)
+    if (event.deltaY > 0) {
+        scaleModifier += 0.5
+    } else {
+        scaleModifier -= 0.5
+    }
+    setScale(scaleModifier)
+    canvasCenter = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+    }
+    draw();
+})
 
 document.getElementById("canvasContainer").append(canvas);
 
@@ -127,17 +145,25 @@ async function nodeFactory() {
 //----------------Data Diaplay----------------------
 //==================================================
 
+let orgData;
 (async function main() {
-    const orgData = await nodeFactory();
-    const nodeLayerCoordinates = getNodeCoordinateObject(315, orgData) //Adjustment Radius
+    orgData = await nodeFactory();
+    // ctx.fillStyle = "red" //Shows canvas center
+    // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
+    draw();
+
+})();//IIFE
+
+function draw() {
+    const nodeLayerCoordinates = getNodeCoordinateObject(getRadius(), orgData) //Adjustment Radius
     drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
     drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
     drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
-    // ctx.fillStyle = "red" //Shows canvas center
-    // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
+}
 
-
-})();//IIFE
+function getRadius() {
+    return canvasCenter.y - (canvasCenter.y * 0.155555)
+}
 
 function getNodeCoordinateObject(outerRadius, orgData) {
     //Adjustment - Percent of outer radius
@@ -148,7 +174,7 @@ function getNodeCoordinateObject(outerRadius, orgData) {
         projectLayerCoordinates: calculateTangentialCoordinates(outerRadius * projectLayerSizeRatio, orgData.projectNodes),
         taskLayerCoordinates: calculateTangentialCoordinates(outerRadius * taskLayerSizeRatio, orgData.taskNodes),
         userLayerCoordinates: calculateTangentialCoordinates(outerRadius, orgData.userNodes),
-        
+
     }
     return nodeCoordinateObject;
 
@@ -166,7 +192,7 @@ function getNodeCoordinateObject(outerRadius, orgData) {
         }
         return coordinates;
     }
-    
+
 
 }
 
@@ -194,12 +220,11 @@ function drawNodeLayer(nodeList, coordinateList) {
                 break;
             case "taskNode":
                 //Adjustment
-                const taskNodeSize = 60;
-
-                ctx.lineWidth = 6;
+                const taskNodeSize = 10;
+                ctx.lineWidth = 2;
                 ctx.rect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
                 ctx.stroke();
-                ctx.font = '18px mono'
+                ctx.font = '22px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
                 ctx.fillText(nodeList[i].label, coordinateList[i].x + 50, coordinateList[i].y + (taskNodeSize + 25))
@@ -208,7 +233,7 @@ function drawNodeLayer(nodeList, coordinateList) {
 
             case "projectNode":
                 //Adjustment
-                const projectNodeSize = 50;
+                const projectNodeSize = 40;
                 // Calculate the coordinates of the hexagon vertices
                 const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
                 const points = [];
