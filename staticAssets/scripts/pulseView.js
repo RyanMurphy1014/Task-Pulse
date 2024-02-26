@@ -27,7 +27,7 @@ let translateX = 0;
 let translateY = 0;
 var velocityX = 0;
 var velocityY = 0;
-var friction = 0.85;
+var friction = 0.90;
 
 canvas.addEventListener('mousedown', (event) => {
     isPanning = true;
@@ -40,7 +40,6 @@ canvas.addEventListener('mousedown', (event) => {
 })
 
 canvas.addEventListener('mousemove', (event) => {
-    console.log(velocityX, velocityY)
     if (isPanning) {
         let dX = event.clientX - startPanX;
         let dY = event.clientY - startPanY;
@@ -72,12 +71,13 @@ canvas.addEventListener('wheel', (event) => {
     if (event.deltaY < 0) {
         bigRadius += 45;
     } else {
-        bigRadius -= 45;
+        if (bigRadius > 400) {
+            bigRadius -= 45;
+        }
     }
     draw();
 })
 function startInertia() {
-    console.log("inertia")
     var inertiaInterval = setInterval(function() {
         velocityX *= friction;
         velocityY *= friction;
@@ -88,7 +88,7 @@ function startInertia() {
         if (Math.abs(velocityX) < 0.1 && Math.abs(velocityY) < 0.1) {
             clearInterval(inertiaInterval);
         }
-    }, 16); // Update every 16ms (about 60fps)
+    }, 32); // Update every 16ms (about 60fps)
 }
 
 document.getElementById("canvasContainer").append(canvas);
@@ -141,9 +141,22 @@ class userNode {
 //==================================================
 //----------------Data Aggregation------------------
 //==================================================
+async function aggregateData() {
+    const users = await fetch("/users/all")
+    const tasks = await fetch("/tasks/all")
+    const projects = await fetch("/projects/all");
 
-async function nodeFactory() {
-    const orgData = await aggregateData();
+    taskDataJson = tasks;
+
+    const fetchedData = {
+        users: await users.json(),
+        tasks: await tasks.json(),
+        projects: await projects.json(),
+    }
+    return fetchedData;
+}
+async function nodeFactory(aggregatedData) {
+    const orgData = aggregatedData;
 
     const userNodes = await generateNodes(orgData.users, "userNode")
     const projectNodes = await generateNodes(orgData.projects, "projectNode")
@@ -154,18 +167,7 @@ async function nodeFactory() {
     return orgNodes
 
     //Helper functions
-    async function aggregateData() {
-        const users = await fetch("/users/all")
-        const tasks = await fetch("/tasks/all")
-        const projects = await fetch("/projects/all");
 
-        const fetchedData = {
-            users: await users.json(),
-            tasks: await tasks.json(),
-            projects: await projects.json(),
-        }
-        return fetchedData;
-    }
 
     async function generateNodes(data, typeOfData) {
         let generatedNodes = [];
@@ -198,22 +200,63 @@ async function nodeFactory() {
 //----------------Data Diaplay----------------------
 //==================================================
 
-let orgData;
+let orgNodes;
 let bigRadius = getRadius();
+let orgDataJson;
 (async function main() {
-    orgData = await nodeFactory();
+    orgDataJson = await aggregateData()
+    orgNodes = await nodeFactory(orgDataJson);
     // ctx.fillStyle = "red" //Shows canvas center
     // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
     draw();
 
 })();//IIFE
 
-function draw() {
-    const nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgData) //Adjustment Radius
-    drawNodeLayer(orgData.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
-    drawNodeLayer(orgData.userNodes, nodeLayerCoordinates.userLayerCoordinates);
-    drawNodeLayer(orgData.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
+function getRawOrgData() {
+
 }
+
+let nodeLayerCoordinates;
+function draw() {
+    nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgNodes) //Adjustment Radius
+
+    drawTaskConnections()
+
+    drawNodeLayer(orgNodes.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
+    drawNodeLayer(orgNodes.userNodes, nodeLayerCoordinates.userLayerCoordinates);
+    drawNodeLayer(orgNodes.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
+
+}
+
+
+function drawTaskConnections() {
+    for (let i = 0; i < orgDataJson.tasks.length; i++) {
+        const task = orgDataJson.tasks[i];
+        ctx.beginPath();
+        const taskNodeCoordinate = nodeLayerCoordinates.taskLayerCoordinates[i];
+        ctx.lineTo(taskNodeCoordinate.x + taskNodeSize / 2, taskNodeCoordinate.y + taskNodeSize / 2);
+        const matchingUser = getUserById(task.assigned_user);
+        const matchingUserIndex = orgDataJson.users.indexOf(matchingUser);
+        const matchingUserCoordinates = nodeLayerCoordinates.userLayerCoordinates[matchingUserIndex]
+        ctx.lineTo(matchingUserCoordinates.x, matchingUserCoordinates.y)
+        ctx.strokeStyle = 'red';
+        ctx.stroke();
+    }
+    //RESUME POINT: find coordinate of task and the nfind coordinate of User
+}
+
+function getUserById(id) {
+    try {
+        for (user of orgDataJson.users) {
+            if (user.user_id === id) {
+                return user
+            }
+        }
+    } catch (err) {
+        console.log(`Could not find user - ${err}`)
+    }
+}
+
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -240,13 +283,19 @@ function getNodeCoordinateObject(outerRadius, orgData) {
         const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
         const coordinates = [];
 
-        for (let i = 0; i < nodes.length; i++) {
-            const angle = angleStep * i;
-            let x = radius * Math.cos(angle);
-            let y = radius * Math.sin(angle);
-            x += canvasCenter.x;
-            y += canvasCenter.y;
+        if (nodes.length === 1) {
+            let x = canvasCenter.x;
+            let y = canvasCenter.y;
             coordinates.push({ x, y }); // Push coordinates to array
+        } else {
+            for (let i = 0; i < nodes.length; i++) {
+                const angle = angleStep * i;
+                let x = radius * Math.cos(angle);
+                let y = radius * Math.sin(angle);
+                x += canvasCenter.x;
+                y += canvasCenter.y;
+                coordinates.push({ x, y }); // Push coordinates to array
+            }
         }
         return coordinates;
     }
@@ -254,8 +303,9 @@ function getNodeCoordinateObject(outerRadius, orgData) {
 
 }
 
-
+const taskNodeSize = 10;
 function drawNodeLayer(nodeList, coordinateList) {
+    ctx.strokeStyle = 'black'
     for (let i = 0; i < nodeList.length; i++) {
         switch (nodeList[i].type) {
             case "userNode":
@@ -267,7 +317,7 @@ function drawNodeLayer(nodeList, coordinateList) {
                 ctx.beginPath();
                 ctx.lineWidth = 6;
                 ctx.arc(coordinateList[i].x, coordinateList[i].y, userNodeSize, 0, Math.PI * 2, false)
-                ctx.stroke();
+                ctx.fill();
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
@@ -278,9 +328,8 @@ function drawNodeLayer(nodeList, coordinateList) {
                 break;
             case "taskNode":
                 //Adjustment
-                const taskNodeSize = 10;
                 ctx.lineWidth = 2;
-                ctx.rect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
+                ctx.fillRect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
                 ctx.stroke();
                 ctx.font = '22px mono'
                 ctx.textAlign = 'center';
