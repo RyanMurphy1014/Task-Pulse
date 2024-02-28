@@ -234,15 +234,31 @@ function drawTaskConnections() {
         const task = orgDataJson.tasks[i];
         ctx.beginPath();
         const taskNodeCoordinate = nodeLayerCoordinates.taskLayerCoordinates[i];
-        ctx.lineTo(taskNodeCoordinate.x + taskNodeSize / 2, taskNodeCoordinate.y + taskNodeSize / 2);
         const matchingUser = getUserById(task.assigned_user);
         const matchingUserIndex = orgDataJson.users.indexOf(matchingUser);
         const matchingUserCoordinates = nodeLayerCoordinates.userLayerCoordinates[matchingUserIndex]
+        ctx.lineWidth = 3
+        ctx.strokeStyle = 'rgb(130,0,0)';
+        const matchingProject = getProjectById(task.parent_project_id)
+        const matchingProjectIndex = orgDataJson.projects.indexOf(matchingProject)
+        const matchingProjectCoordinates = nodeLayerCoordinates.projectLayerCoordinates[matchingProjectIndex];
         ctx.lineTo(matchingUserCoordinates.x, matchingUserCoordinates.y)
-        ctx.strokeStyle = 'red';
+        ctx.lineTo(taskNodeCoordinate.x + taskNodeSize / 2, taskNodeCoordinate.y + taskNodeSize / 2);
+        ctx.lineTo(matchingProjectCoordinates.x, matchingProjectCoordinates.y)
         ctx.stroke();
     }
     //RESUME POINT: find coordinate of task and the nfind coordinate of User
+}
+function getProjectById(id) {
+    try {
+        for (project of orgDataJson.projects) {
+            if (project.project_id === id) {
+                return project;
+            }
+        }
+    } catch (err) {
+        console.log(`Could not find project - ${err}`)
+    }
 }
 
 function getUserById(id) {
@@ -304,6 +320,8 @@ function getNodeCoordinateObject(outerRadius, orgData) {
 }
 
 const taskNodeSize = 10;
+const userNodeSize = 35;
+const projectNodeSize = 40;
 function drawNodeLayer(nodeList, coordinateList) {
     ctx.strokeStyle = 'black'
     for (let i = 0; i < nodeList.length; i++) {
@@ -311,8 +329,8 @@ function drawNodeLayer(nodeList, coordinateList) {
             case "userNode":
 
                 //Adjustment
-                const userNodeSize = 35;
 
+                ctx.fillStyle = 'rgb(80,80,80)'
                 ctx.stroke();
                 ctx.beginPath();
                 ctx.lineWidth = 6;
@@ -321,26 +339,25 @@ function drawNodeLayer(nodeList, coordinateList) {
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
-                //Need to find way to vertically align text
+                ctx.fillStyle = 'black'
                 ctx.fillText(nodeList[i].label, coordinateList[i].x, coordinateList[i].y + userNodeSize + 25)
-
+                ctx.strokeStyle = 'black'
+                ctx.arc(coordinateList[i].x, coordinateList[i].y, userNodeSize, 0, Math.PI * 2, false)
+                ctx.stroke();
 
                 break;
             case "taskNode":
                 //Adjustment
                 ctx.lineWidth = 2;
                 ctx.fillRect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
-                ctx.stroke();
                 ctx.font = '22px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
                 ctx.fillText(nodeList[i].label, coordinateList[i].x + 50, coordinateList[i].y + (taskNodeSize + 25))
-                ctx.stroke();
                 break;
 
             case "projectNode":
                 //Adjustment
-                const projectNodeSize = 40;
                 // Calculate the coordinates of the hexagon vertices
                 const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
                 const points = [];
@@ -358,8 +375,10 @@ function drawNodeLayer(nodeList, coordinateList) {
                     ctx.lineTo(points[i].x, points[i].y);
                 }
                 ctx.closePath();
+                ctx.fillStyle = 'rgb(80,80,80)'
+                ctx.fill();
+                ctx.strokeStyle = 'black'
                 ctx.stroke();
-
                 ctx.font = '18px mono'
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
