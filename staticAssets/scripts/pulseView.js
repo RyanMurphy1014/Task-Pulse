@@ -18,6 +18,183 @@ let canvasCenter = {
     x: canvas.width / 2,
     y: canvas.height / 2,
 }
+document.getElementById("canvasContainer").append(canvas);
+
+const taskNodeSize = 10;
+const userNodeSize = 35;
+const projectNodeSize = 40;
+let outterRadius = getRadius();
+
+async function aggregateData() {
+    const users = await fetch("/users/all")
+    const tasks = await fetch("/tasks/all")
+    const projects = await fetch("/projects/all");
+
+    taskDataJson = tasks;
+
+    const fetchedData = {
+        users: await users.json(),
+        tasks: await tasks.json(),
+        projects: await projects.json(),
+    }
+    return fetchedData;
+}
+
+let orgData;
+(async function main() {
+    orgData = await aggregateData()
+    draw();
+
+})();//IIFE
+
+function draw() {
+    nodesWithCoordinates = addCoordinates(outterRadius, orgData) //Adjustment Radius
+
+    drawTaskConnections(orgData)
+
+    drawNodeLayer(orgData.projects, "projectNode");
+    drawNodeLayer(orgData.users, "userNode");
+    drawNodeLayer(orgData.tasks, "taskNode");
+}
+
+function drawTaskConnections(orgNodes) {
+    for (node of orgNodes.tasks) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgb(130,0,0)';
+        ctx.lineWidth = 3
+
+        const matchingUser = getUserById(node.assigned_user);
+        const matchingProject = getProjectById(node.parent_project_id);
+        ctx.lineTo(matchingUser.x, matchingUser.y)
+        ctx.lineTo(node.x + taskNodeSize / 2, node.y + taskNodeSize / 2);
+        ctx.lineTo(matchingProject.x, matchingProject.y)
+        ctx.stroke();
+    }
+}
+
+function getProjectById(id) {
+    for (project of orgData.projects) {
+        if (project.project_id === id) {
+            return project;
+        }
+    }
+}
+
+function getUserById(id) {
+    for (user of orgData.users) {
+        if (user.user_id === id) {
+            return user
+        }
+    }
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+}
+
+function getRadius() {
+    return canvasCenter.y - (canvasCenter.y * 0.15)
+}
+
+function addCoordinates(outerRadius, orgData) {
+    //Adjustment - Percent of outer radius
+    const taskLayerSizeRatio = 0.45;
+    const projectLayerSizeRatio = 0.1;
+
+    mutateWithCoordinates(outerRadius * projectLayerSizeRatio, orgData.projects)
+    mutateWithCoordinates(outerRadius * taskLayerSizeRatio, orgData.tasks)
+    mutateWithCoordinates(outerRadius, orgData.users)
+
+    return orgData;
+
+    function mutateWithCoordinates(radius, nodes) {
+        const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
+
+        if (nodes.length === 1) {
+            let x = canvasCenter.x;
+            let y = canvasCenter.y;
+            nodes[0].x = x;
+            nodes[0].y = y;
+        } else {
+            for (let i = 0; i < nodes.length; i++) {
+                const angle = angleStep * i;
+                let x = radius * Math.cos(angle);
+                let y = radius * Math.sin(angle);
+                nodes[i].x = x + canvasCenter.x;
+                nodes[i].y = y + canvasCenter.y;
+            }
+        }
+        return nodes;
+    }
+}
+
+function drawNodeLayer(nodeList, type) {
+    ctx.strokeStyle = 'black'
+    for (let i = 0; i < nodeList.length; i++) {
+        switch (type) {
+            case "userNode":
+                ctx.fillStyle = 'rgb(80,80,80)'
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.lineWidth = 6;
+                ctx.arc(nodeList[i].x, nodeList[i].y, userNodeSize, 0, Math.PI * 2, false)
+                ctx.fill();
+                ctx.font = '18px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                ctx.fillStyle = 'black'
+                ctx.fillText(nodeList[i].name, nodeList[i].x, nodeList[i].y + userNodeSize + 25)
+                ctx.strokeStyle = 'black'
+                ctx.arc(nodeList[i].x, nodeList[i].y, userNodeSize, 0, Math.PI * 2, false)
+                ctx.stroke();
+
+                break;
+            case "taskNode":
+                ctx.lineWidth = 2;
+                ctx.fillRect(nodeList[i].x, nodeList[i].y, taskNodeSize, taskNodeSize)
+                ctx.font = '22px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                ctx.fillText(nodeList[i].name, nodeList[i].x + 50, nodeList[i].y + (taskNodeSize + 25))
+                break;
+
+            case "projectNode":
+                const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
+                const points = [];
+                for (let j = 0; j < 6; j++) {
+                    const angle = angleStep * j;
+                    const x = nodeList[i].x + projectNodeSize * Math.cos(angle);
+                    const y = nodeList[i].y + projectNodeSize * Math.sin(angle);
+                    points.push({ x, y });
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x, points[i].y);
+                }
+
+                ctx.closePath();
+                ctx.fillStyle = 'rgb(80,80,80)'
+                ctx.fill();
+                ctx.strokeStyle = 'black'
+                ctx.stroke();
+                ctx.font = '18px mono'
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'center'
+                ctx.fillStyle = "black"
+                ctx.fillText(nodeList[i].label, nodeList[i].x, nodeList[i].y + projectNodeSize + 15)
+                ctx.stroke();
+                break;
+            default:
+                console.log("we hit the default - switch checks node type")
+                break;
+        }
+
+
+    }
+}
 
 //Variables for panning
 let isPanning = false;
@@ -25,9 +202,9 @@ let startPanX;
 let startPanY;
 let translateX = 0;
 let translateY = 0;
-var velocityX = 0;
-var velocityY = 0;
-var friction = 0.90;
+let velocityX = 0;
+let velocityY = 0;
+let friction = 0.90;
 
 canvas.addEventListener('mousedown', (event) => {
     isPanning = true;
@@ -69,16 +246,16 @@ canvas.addEventListener('mouseleave', () => {
 canvas.addEventListener('wheel', (event) => {
     clearCanvas();
     if (event.deltaY < 0) {
-        bigRadius += 45;
+        outterRadius += 45;
     } else {
-        if (bigRadius > 400) {
-            bigRadius -= 45;
+        if (outterRadius > 400) {
+            outterRadius -= 45;
         }
     }
     draw();
 })
 function startInertia() {
-    var inertiaInterval = setInterval(function() {
+    let inertiaInterval = setInterval(function() {
         velocityX *= friction;
         velocityY *= friction;
         canvasCenter.x += velocityX;
@@ -91,305 +268,3 @@ function startInertia() {
     }, 32); // Update every 16ms (about 60fps)
 }
 
-document.getElementById("canvasContainer").append(canvas);
-
-
-//==================================================
-//---------------------Classes------------------------
-//==================================================
-class taskNode {
-    constructor(label, data_id) {
-        this.type = "taskNode";
-        this.shape = "square"
-        this.label = label;
-        this.data = data_id;
-
-    }
-
-    toString() {
-        return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
-    }
-
-}
-class projectNode {
-    constructor(label, data_id) {
-        this.type = "projectNode";
-        this.shape = "hexagon"
-        this.label = label;
-        this.data = data_id;
-
-    }
-
-    toString() {
-        return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
-    }
-
-}
-class userNode {
-    constructor(label, data_id) {
-        this.type = "userNode";
-        this.shape = "circle"
-        this.label = label;
-        this.data = data_id;
-    }
-
-    toString() {
-        return `This node is type: ${this.type} with shape: ${this.shape} - labeled ${this.label} pointing to data_id ${this.data}`
-    }
-}
-
-//==================================================
-//----------------Data Aggregation------------------
-//==================================================
-async function aggregateData() {
-    const users = await fetch("/users/all")
-    const tasks = await fetch("/tasks/all")
-    const projects = await fetch("/projects/all");
-
-    taskDataJson = tasks;
-
-    const fetchedData = {
-        users: await users.json(),
-        tasks: await tasks.json(),
-        projects: await projects.json(),
-    }
-    return fetchedData;
-}
-async function nodeFactory(aggregatedData) {
-    const orgData = aggregatedData;
-
-    const userNodes = await generateNodes(orgData.users, "userNode")
-    const projectNodes = await generateNodes(orgData.projects, "projectNode")
-    const taskNodes = await generateNodes(orgData.tasks, "taskNode")
-
-    //Gathers processed data into an output object
-    const orgNodes = { userNodes, projectNodes, taskNodes }
-    return orgNodes
-
-    //Helper functions
-
-
-    async function generateNodes(data, typeOfData) {
-        let generatedNodes = [];
-        switch (typeOfData) {
-            case "userNode":
-                for (element of data) {
-                    generatedNodes.push(new userNode(element.name, element.user_id))
-                }
-                break;
-
-            case "projectNode":
-                for (element of data) {
-                    generatedNodes.push(new projectNode(element.name, element.project_id))
-                }
-                break;
-
-            case "taskNode":
-                for (element of data) {
-                    generatedNodes.push(new taskNode(element.name, element.task_id))
-                }
-                break;
-            default:
-                console.log("Hitting the default")
-        }
-        return generatedNodes;
-    }
-}
-
-//==================================================
-//----------------Data Diaplay----------------------
-//==================================================
-
-let orgNodes;
-let bigRadius = getRadius();
-let orgDataJson;
-(async function main() {
-    orgDataJson = await aggregateData()
-    orgNodes = await nodeFactory(orgDataJson);
-    // ctx.fillStyle = "red" //Shows canvas center
-    // ctx.fillRect(0, 0, canvasCenter.x, canvasCenter.y)
-    draw();
-
-})();//IIFE
-
-function getRawOrgData() {
-
-}
-
-let nodeLayerCoordinates;
-function draw() {
-    nodeLayerCoordinates = getNodeCoordinateObject(bigRadius, orgNodes) //Adjustment Radius
-
-    drawTaskConnections()
-
-    drawNodeLayer(orgNodes.projectNodes, nodeLayerCoordinates.projectLayerCoordinates);
-    drawNodeLayer(orgNodes.userNodes, nodeLayerCoordinates.userLayerCoordinates);
-    drawNodeLayer(orgNodes.taskNodes, nodeLayerCoordinates.taskLayerCoordinates);
-
-}
-
-
-function drawTaskConnections() {
-    for (let i = 0; i < orgDataJson.tasks.length; i++) {
-        const task = orgDataJson.tasks[i];
-        ctx.beginPath();
-        const taskNodeCoordinate = nodeLayerCoordinates.taskLayerCoordinates[i];
-        const matchingUser = getUserById(task.assigned_user);
-        const matchingUserIndex = orgDataJson.users.indexOf(matchingUser);
-        const matchingUserCoordinates = nodeLayerCoordinates.userLayerCoordinates[matchingUserIndex]
-        ctx.lineWidth = 3
-        ctx.strokeStyle = 'rgb(130,0,0)';
-        const matchingProject = getProjectById(task.parent_project_id)
-        const matchingProjectIndex = orgDataJson.projects.indexOf(matchingProject)
-        const matchingProjectCoordinates = nodeLayerCoordinates.projectLayerCoordinates[matchingProjectIndex];
-        ctx.lineTo(matchingUserCoordinates.x, matchingUserCoordinates.y)
-        ctx.lineTo(taskNodeCoordinate.x + taskNodeSize / 2, taskNodeCoordinate.y + taskNodeSize / 2);
-        ctx.lineTo(matchingProjectCoordinates.x, matchingProjectCoordinates.y)
-        ctx.stroke();
-    }
-    //RESUME POINT: find coordinate of task and the nfind coordinate of User
-}
-function getProjectById(id) {
-    try {
-        for (project of orgDataJson.projects) {
-            if (project.project_id === id) {
-                return project;
-            }
-        }
-    } catch (err) {
-        console.log(`Could not find project - ${err}`)
-    }
-}
-
-function getUserById(id) {
-    try {
-        for (user of orgDataJson.users) {
-            if (user.user_id === id) {
-                return user
-            }
-        }
-    } catch (err) {
-        console.log(`Could not find user - ${err}`)
-    }
-}
-
-function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-}
-
-function getRadius() {
-    return canvasCenter.y - (canvasCenter.y * 0.155555)
-}
-
-function getNodeCoordinateObject(outerRadius, orgData) {
-    //Adjustment - Percent of outer radius
-    const taskLayerSizeRatio = 0.45;
-    const projectLayerSizeRatio = 0.1;
-
-    let nodeCoordinateObject = {
-        projectLayerCoordinates: calculateTangentialCoordinates(outerRadius * projectLayerSizeRatio, orgData.projectNodes),
-        taskLayerCoordinates: calculateTangentialCoordinates(outerRadius * taskLayerSizeRatio, orgData.taskNodes),
-        userLayerCoordinates: calculateTangentialCoordinates(outerRadius, orgData.userNodes),
-
-    }
-    return nodeCoordinateObject;
-
-    function calculateTangentialCoordinates(radius, nodes) {
-        const angleStep = (2 * Math.PI) / nodes.length; // Calculate angle step
-        const coordinates = [];
-
-        if (nodes.length === 1) {
-            let x = canvasCenter.x;
-            let y = canvasCenter.y;
-            coordinates.push({ x, y }); // Push coordinates to array
-        } else {
-            for (let i = 0; i < nodes.length; i++) {
-                const angle = angleStep * i;
-                let x = radius * Math.cos(angle);
-                let y = radius * Math.sin(angle);
-                x += canvasCenter.x;
-                y += canvasCenter.y;
-                coordinates.push({ x, y }); // Push coordinates to array
-            }
-        }
-        return coordinates;
-    }
-
-
-}
-
-const taskNodeSize = 10;
-const userNodeSize = 35;
-const projectNodeSize = 40;
-function drawNodeLayer(nodeList, coordinateList) {
-    ctx.strokeStyle = 'black'
-    for (let i = 0; i < nodeList.length; i++) {
-        switch (nodeList[i].type) {
-            case "userNode":
-
-                //Adjustment
-
-                ctx.fillStyle = 'rgb(80,80,80)'
-                ctx.stroke();
-                ctx.beginPath();
-                ctx.lineWidth = 6;
-                ctx.arc(coordinateList[i].x, coordinateList[i].y, userNodeSize, 0, Math.PI * 2, false)
-                ctx.fill();
-                ctx.font = '18px mono'
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'center'
-                ctx.fillStyle = 'black'
-                ctx.fillText(nodeList[i].label, coordinateList[i].x, coordinateList[i].y + userNodeSize + 25)
-                ctx.strokeStyle = 'black'
-                ctx.arc(coordinateList[i].x, coordinateList[i].y, userNodeSize, 0, Math.PI * 2, false)
-                ctx.stroke();
-
-                break;
-            case "taskNode":
-                //Adjustment
-                ctx.lineWidth = 2;
-                ctx.fillRect(coordinateList[i].x, coordinateList[i].y, taskNodeSize, taskNodeSize)
-                ctx.font = '22px mono'
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateList[i].x + 50, coordinateList[i].y + (taskNodeSize + 25))
-                break;
-
-            case "projectNode":
-                //Adjustment
-                // Calculate the coordinates of the hexagon vertices
-                const angleStep = (Math.PI / 180) * 60; // 60 degrees in radians
-                const points = [];
-                for (let j = 0; j < 6; j++) {
-                    const angle = angleStep * j;
-                    const x = coordinateList[i].x + projectNodeSize * Math.cos(angle);
-                    const y = coordinateList[i].y + projectNodeSize * Math.sin(angle);
-                    points.push({ x, y });
-                }
-
-                // Draw the hexagon
-                ctx.beginPath();
-                ctx.moveTo(points[0].x, points[0].y);
-                for (let i = 1; i < points.length; i++) {
-                    ctx.lineTo(points[i].x, points[i].y);
-                }
-                ctx.closePath();
-                ctx.fillStyle = 'rgb(80,80,80)'
-                ctx.fill();
-                ctx.strokeStyle = 'black'
-                ctx.stroke();
-                ctx.font = '18px mono'
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'center'
-                ctx.fillText(nodeList[i].label, coordinateList[i].x, coordinateList[i].y + projectNodeSize + 15) //Node size is added to push label
-                ctx.stroke();                                                        //Below shape
-                break;
-            default:
-                console.log("we hit the default - switch checks node type")
-                break;
-        }
-
-
-    }
-}
