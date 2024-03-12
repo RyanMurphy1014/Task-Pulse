@@ -43,9 +43,28 @@ async function aggregateData() {
 let orgData;
 (async function main() {
     orgData = await aggregateData()
+    orgData = alignUsersToTask(orgData)
     draw();
 
 })();//IIFE
+
+function alignUsersToTask(data) {
+    const step = Math.floor(data.users.length / data.tasks.length);
+    let count = 0;
+    for (task of data.tasks) {
+        let index = 0;
+        for (user of data.users) {
+            if (task.assigned_user === user.user_id) {
+                const destinationIndex = step * count;
+                data.users.splice(index, 1);
+                data.users.splice(destinationIndex, 0, user);
+            }
+            index++;
+        }
+        count++;
+    }
+    return data;
+}
 
 function draw() {
     nodesWithCoordinates = addCoordinates(outterRadius, orgData) //Adjustment Radius
@@ -184,7 +203,7 @@ function drawNodeLayer(nodeList, type) {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'center'
                 ctx.fillStyle = "black"
-                ctx.fillText(nodeList[i].label, nodeList[i].x, nodeList[i].y + projectNodeSize + 15)
+                ctx.fillText(nodeList[i].name, nodeList[i].x, nodeList[i].y + projectNodeSize + 15)
                 ctx.stroke();
                 break;
             default:
