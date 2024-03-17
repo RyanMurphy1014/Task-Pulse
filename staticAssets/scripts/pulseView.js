@@ -116,11 +116,24 @@ function getRadius() {
     return canvasCenter.y - (canvasCenter.y * 0.15)
 }
 
+function removeDuplicateIdTasks(taskArray){
+    let seen = [];
+    return taskArray.filter(task => {
+        if(!seen.includes(task.task_id)){
+            seen.push(task.task_id)
+            return true;
+        }
+        return false;
+    })
+
+}
+
 function addCoordinates(outerRadius, orgData) {
     //Adjustment - Percent of outer radius
     const taskLayerSizeRatio = 0.45;
     const projectLayerSizeRatio = 0.1;
 
+    orgData.tasks = removeDuplicateIdTasks(orgData.tasks);
     mutateWithCoordinates(outerRadius * projectLayerSizeRatio, orgData.projects)
     mutateWithCoordinates(outerRadius * taskLayerSizeRatio, orgData.tasks)
     mutateWithCoordinates(outerRadius, orgData.users)
