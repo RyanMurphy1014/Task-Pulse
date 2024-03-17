@@ -77,7 +77,9 @@ function draw() {
 }
 
 function drawTaskConnections(orgNodes) {
+    let coordinateStack = []
     for (node of orgNodes.tasks) {
+        console.log(node)
         ctx.beginPath();
         ctx.strokeStyle = 'rgb(130,0,0)';
         ctx.lineWidth = 3
@@ -85,7 +87,16 @@ function drawTaskConnections(orgNodes) {
         const matchingUser = getUserById(node.assigned_user);
         const matchingProject = getProjectById(node.parent_project_id);
         ctx.lineTo(matchingUser.x, matchingUser.y)
-        ctx.lineTo(node.x + taskNodeSize / 2, node.y + taskNodeSize / 2);
+
+        if ('x' in node || 'y' in node) {
+            ctx.lineTo(node.x + taskNodeSize / 2, node.y + taskNodeSize / 2);
+            coordinateStack.push([node.x, node.y])
+        } else {
+            const lastCoordinate = coordinateStack.pop();
+            //console.log(`Drew to task at ${lastCoordinate.x}, ${lastCoordinate.y}`)
+            ctx.lineTo(lastCoordinate[0] + taskNodeSize / 2, lastCoordinate[1] + taskNodeSize / 2);
+        }
+
         ctx.lineTo(matchingProject.x, matchingProject.y)
         ctx.stroke();
     }
@@ -116,10 +127,10 @@ function getRadius() {
     return canvasCenter.y - (canvasCenter.y * 0.15)
 }
 
-function removeDuplicateIdTasks(taskArray){
+function removeDuplicateIdTasks(taskArray) {
     let seen = [];
     return taskArray.filter(task => {
-        if(!seen.includes(task.task_id)){
+        if (!seen.includes(task.task_id)) {
             seen.push(task.task_id)
             return true;
         }
@@ -128,14 +139,15 @@ function removeDuplicateIdTasks(taskArray){
 
 }
 
+
 function addCoordinates(outerRadius, orgData) {
     //Adjustment - Percent of outer radius
     const taskLayerSizeRatio = 0.45;
     const projectLayerSizeRatio = 0.1;
 
-    orgData.tasks = removeDuplicateIdTasks(orgData.tasks);
+
     mutateWithCoordinates(outerRadius * projectLayerSizeRatio, orgData.projects)
-    mutateWithCoordinates(outerRadius * taskLayerSizeRatio, orgData.tasks)
+    mutateWithCoordinates(outerRadius * taskLayerSizeRatio, removeDuplicateIdTasks(orgData.tasks))
     mutateWithCoordinates(outerRadius, orgData.users)
 
     return orgData;
